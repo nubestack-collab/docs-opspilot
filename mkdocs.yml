@@ -3,7 +3,7 @@ site_description: >-
   Product documentation for NubeStack OpsPilot — an AI operations workbench
   for DevOps, SRE, network, platform and development teams.
 site_author: NubeStack
-site_url: https://nubestack-collab.github.io/docs-opspilot/
+site_url: https://opspilot.nubestack.com/
 copyright: Copyright &copy; NubeStack. All rights reserved.
 
 theme:
