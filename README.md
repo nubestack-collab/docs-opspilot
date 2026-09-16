@@ -78,5 +78,5 @@ re-run the workflow.
 
 The published URL is <https://nubestack-collab.github.io/docs-opspilot/>, which
 is also `site_url` in `mkdocs.yml`. If the repository is ever renamed or moved to
-another owner, update `site_url`, `repo_url` and `repo_name` to match, or the
-canonical links and the sitemap will point at the old address.
+another owner, update `site_url` to match, or the canonical links and the sitemap
+will point at the old address.
