@@ -56,10 +56,9 @@ settings apply only when you are using a pay-as-you-go provider — an assistant
 connector is pull-based and is not affected by them.
 
 **Auto-run safe commands** is not on the AI Providers page. It sits under
-**Settings → Security →
-Command Safety**, because it is a command-approval policy that applies to every
-command source rather than a provider-specific behaviour. The page says so in place,
-and links across.
+**Settings → Security → Command Safety**, because it is a command-approval policy
+that applies to every command source rather than a provider-specific behaviour. The
+AI Providers page says so in place, and links across.
 
 Full detail: [AI provider matrix](provider-matrix.md) and
 [AI providers](../ai/providers.md).
