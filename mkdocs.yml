@@ -1,0 +1,173 @@
+site_name: NubeStack OpsPilot
+site_description: >-
+  Product documentation for NubeStack OpsPilot — an AI operations workbench
+  for DevOps, SRE, network, platform and development teams.
+site_author: NubeStack
+site_url: https://nubestack-collab.github.io/docs-opspilot/
+copyright: Copyright &copy; NubeStack. All rights reserved.
+
+repo_url: https://github.com/nubestack-collab/docs-opspilot
+repo_name: nubestack-collab/docs-opspilot
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  favicon: assets/images/opspilot-favicon.svg
+  logo: assets/images/opspilot-mark.svg
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Follow system theme
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+    - content.action.edit
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+  - tags
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/nubestack-collab
+      name: NubeStack on GitHub
+
+nav:
+  - Home: index.md
+  - Overview:
+      - overview/index.md
+      - What OpsPilot is: overview/what-is-opspilot.md
+      - Why OpsPilot: overview/why-opspilot.md
+      - Who it is for: overview/who-its-for.md
+      - How it works: overview/how-it-works.md
+      - Architecture: overview/architecture.md
+  - Getting started:
+      - getting-started/index.md
+      - System requirements: getting-started/requirements.md
+      - Install: getting-started/install.md
+      - First run: getting-started/first-run.md
+      - Quickstart: getting-started/quickstart.md
+  - Connections:
+      - connections/index.md
+      - Add a connection: connections/adding-connections.md
+      - Connection types: connections/connection-types.md
+      - Hypervisor consoles: connections/hypervisor-consoles.md
+      - Remote desktop (RDP & VNC): connections/remote-desktop.md
+      - Groups & environments: connections/organising.md
+      - Credentials: connections/credentials.md
+  - Workspace:
+      - workspace/index.md
+      - Sessions & tabs: workspace/sessions.md
+      - The terminal: workspace/terminal.md
+      - Built-in tools: workspace/tools.md
+      - Files & transfers: workspace/files-and-transfers.md
+      - Object storage (S3): workspace/object-storage.md
+  - AI:
+      - ai/index.md
+      - AI Providers: ai/providers.md
+      - Offline with Ollama: ai/offline-ollama.md
+      - Self-hosted & enterprise: ai/self-hosted.md
+      - AI Assistants (MCP): ai/assistants.md
+      - Remote & mobile operation: ai/remote-mobile.md
+      - Using the AI panel: ai/using-the-ai-panel.md
+      - What gets sent: ai/what-gets-sent.md
+  - Safety & security:
+      - safety/index.md
+      - Execution boundary & risk tiers: safety/risk-tiers.md
+      - Approvals & auto-run: safety/approvals.md
+      - Command Safety profiles: safety/command-safety-profiles.md
+      - Data Handling profiles: safety/data-handling-profiles.md
+      - Security model: safety/security-model.md
+      - Hardening checklist: safety/hardening.md
+  - Operate:
+      - operations/index.md
+      - Workflows by role: operations/workflows-by-role.md
+      - Administration & rollout: operations/administration.md
+      - Backup & upgrade: operations/backup-and-upgrade.md
+      - Troubleshooting: operations/troubleshooting.md
+  - Reference:
+      - reference/index.md
+      - Connection fields: reference/connection-fields.md
+      - Settings map: reference/settings-map.md
+      - AI provider matrix: reference/provider-matrix.md
+      - MCP tools: reference/mcp-tools.md
+      - Redaction categories: reference/redaction-categories.md
+      - Dangerous patterns: reference/dangerous-patterns.md
+      - Network requirements: reference/network-requirements.md
+      - Keyboard & shortcuts: reference/keyboard.md
+      - Glossary: reference/glossary.md
+  - About:
+      - about/index.md
+      - Plans & subscription: about/plans.md
+      - Release notes: about/release-notes.md
+      - Support: about/support.md
+      - Privacy & licensing: about/licensing.md

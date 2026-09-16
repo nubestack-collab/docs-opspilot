@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 8 48 48" role="img" aria-label="OpsPilot">
+  <!-- The OpsPilot mark from the NubeStack website
+       (themes/hugo-arcana/layouts/partials/opspilot-mark.html): a terminal
+       frame, a prompt chevron and a cursor. Single tone — the site draws all
+       three shapes in currentColor, and only the animated hero variant tints
+       the cursor green. Geometry is on a 64 grid about (32,32); the viewBox
+       crops to the ink so the mark fills the box it is given.
+       This copy is white, for the teal site header. -->
+  <g fill="none" stroke="#ffffff">
+    <rect x="10" y="10" width="44" height="44" rx="11" stroke-width="3.5"/>
+    <path d="M22 26 L31 33 L22 40" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <rect x="34" y="36.5" width="11" height="4" rx="2" fill="#ffffff"/>
+</svg>

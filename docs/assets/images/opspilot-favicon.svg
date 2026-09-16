@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="8 8 48 48" role="img" aria-label="OpsPilot">
+  <!-- Favicon copy of the OpsPilot mark. Same single-tone geometry as
+       opspilot-mark.svg, drawn in the site's teal so it reads against both a
+       light and a dark browser tab strip. -->
+  <g fill="none" stroke="#009688">
+    <rect x="10" y="10" width="44" height="44" rx="11" stroke-width="3.5"/>
+    <path d="M22 26 L31 33 L22 40" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <rect x="34" y="36.5" width="11" height="4" rx="2" fill="#009688"/>
+</svg>
