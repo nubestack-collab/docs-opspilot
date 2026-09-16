@@ -6,17 +6,11 @@ site_author: NubeStack
 site_url: https://nubestack-collab.github.io/docs-opspilot/
 copyright: Copyright &copy; NubeStack. All rights reserved.
 
-repo_url: https://github.com/nubestack-collab/docs-opspilot
-repo_name: nubestack-collab/docs-opspilot
-edit_uri: edit/main/docs/
-
 theme:
   name: material
   language: en
   favicon: assets/images/opspilot-favicon.svg
   logo: assets/images/opspilot-mark.svg
-  icon:
-    repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
@@ -52,7 +46,6 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - content.tooltips
-    - content.action.edit
 
 extra_css:
   - stylesheets/extra.css
