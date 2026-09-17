@@ -6,7 +6,11 @@ hide:
 
 <div class="opspilot-hero" markdown>
 
-![OpsPilot](assets/images/opspilot-mark.svg){ .opspilot-hero-mark }
+<svg class="opspilot-hero-mark" viewBox="8 8 48 48" role="img" aria-label="OpsPilot">
+  <rect class="opspilot-mark-frame" x="10" y="10" width="44" height="44" rx="11"/>
+  <path class="opspilot-mark-prompt" d="M22 26 L31 33 L22 40"/>
+  <rect class="opspilot-mark-cursor" x="34" y="36.5" width="11" height="4" rx="2"/>
+</svg>
 
 # OpsPilot
 

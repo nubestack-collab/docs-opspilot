@@ -49,10 +49,39 @@
   max-width: 40rem;
   margin: 2.5rem auto 1.5rem;
 }
+/* Same brand colour and cursor-blink animation as the product's own
+   hero mark on the marketing site (nubestack.com/products/opspilot/):
+   #3c7d7d frame and prompt, #4ade80 cursor blinking on a hard 1.4s cycle. */
 .opspilot-hero-mark {
-  width: 4.5rem;
-  height: 4.5rem;
+  width: clamp(88px, 12vw, 128px);
+  height: auto;
+  display: block;
   margin: 0 auto 1rem;
+  overflow: visible;
+  color: #3c7d7d;
+}
+.opspilot-hero-mark .opspilot-mark-frame {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+}
+.opspilot-hero-mark .opspilot-mark-prompt {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.opspilot-hero-mark .opspilot-mark-cursor {
+  fill: #4ade80;
+  animation: opspilot-hero-blink 1.4s steps(1, end) infinite;
+}
+@keyframes opspilot-hero-blink {
+  0%, 55%  { opacity: 1; }
+  56%, 99% { opacity: 0.18; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .opspilot-hero-mark .opspilot-mark-cursor { animation: none; }
 }
 .opspilot-hero h1 {
   font-size: 2.6rem;
