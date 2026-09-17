@@ -1,64 +1,86 @@
-# NubeStack OpsPilot
+---
+hide:
+  - navigation
+  - toc
+---
 
-OpsPilot is a desktop operations workbench. It is a terminal, a file manager, a
-remote-desktop client and an AI assistant in one application, and it is built
-around a single idea:
+<div class="opspilot-hero" markdown>
+
+![OpsPilot](assets/images/opspilot-mark.svg){ .opspilot-hero-mark }
+
+# OpsPilot
+
+**AI on your terminal — including the terminals AI can't normally reach.**
+
+[Get started](getting-started/quickstart.md){ .md-button .md-button--primary }
+[Why OpsPilot](overview/why-opspilot.md){ .md-button }
+
+</div>
+
+![The OpsPilot workspace: saved connections on the left, a live terminal in the centre, the AI panel on the right](assets/images/02-workspace.png){ .opspilot-hero-shot }
+
+OpsPilot is a desktop operations workbench — a terminal, a file manager, a
+remote-desktop client and an AI assistant in one application. You connect the way
+you always have — SSH, RDP, VNC, FTP, S3, serial, or a local shell — and OpsPilot
+watches the session with you. Ask it a question and it reads the scrollback,
+strips the secrets out locally, and brings back an explanation plus a proposed
+command.
 
 !!! quote ""
     **The AI helps you operate your infrastructure. It never operates your
     infrastructure itself.**
 
-You connect to your servers, switches, storage and desktops the way you always
-have — SSH, RDP, VNC, FTP, S3, serial, or a local shell. OpsPilot watches the
-session with you. When you ask it a question, it reads the scrollback, strips the
-secrets out locally, sends only the sanitised text to the AI model you chose, and
-brings back an explanation plus a proposed command.
-
-That command does not run. It appears in front of you, labelled with a risk tier,
-showing the exact text you are about to execute. You decide.
-
-![The OpsPilot workspace: saved connections on the left, a live terminal in the centre, the AI panel on the right](assets/images/02-workspace.png)
-
-*The OpsPilot workspace. Saved connections grouped by environment on the left,
-the live session in the centre, the AI panel on the right. The green **AI** badge
-marks which connections the assistant is allowed to see at all.*
+That command does not run on its own. It appears in front of you, labelled with a
+risk tier and showing the exact text you are about to execute. You decide.
 
 ## Start here
 
 <div class="grid cards" markdown>
 
--   **New to OpsPilot**
+-   :material-compass-outline:{ .lg .middle } **New to OpsPilot**
+
+    ---
 
     What it is, why it exists and how the loop works.
 
     [Overview](overview/index.md)
 
--   **Ready to install**
+-   :material-download-outline:{ .lg .middle } **Ready to install**
+
+    ---
 
     Requirements, installers, first run, and a five-minute quickstart.
 
     [Getting started](getting-started/index.md)
 
--   **Connecting to things**
+-   :material-lan-connect:{ .lg .middle } **Connecting to things**
+
+    ---
 
     Ten connection types, hypervisor consoles, groups and credentials.
 
     [Connections](connections/index.md)
 
--   **Bringing your own AI**
+-   :material-robot-outline:{ .lg .middle } **Bringing your own AI**
+
+    ---
 
     Ten providers, a fully offline option, or the subscription you already pay
     for.
 
     [AI](ai/index.md)
 
--   **Signing it off**
+-   :material-shield-check-outline:{ .lg .middle } **Signing it off**
+
+    ---
 
     The execution boundary, risk tiers, redaction and the security model.
 
     [Safety & security](safety/index.md)
 
--   **Rolling it out**
+-   :material-account-group-outline:{ .lg .middle } **Rolling it out**
+
+    ---
 
     Role workflows, administration, upgrades and troubleshooting.
 
