@@ -32,6 +32,7 @@ docs/
   index.md                    landing page
   overview/                   what it is, why, who for, how it works, architecture
   getting-started/            requirements, install, first run, quickstart
+  licensing/                  free trial and limits, subscribe, activate, licensing for IT
   connections/                connection types, hypervisor consoles, RDP/VNC, groups, credentials
   workspace/                  sessions, terminal, built-in tools, files, S3
   ai/                         providers, offline Ollama, self-hosted, MCP assistants, remote/mobile
@@ -39,8 +40,9 @@ docs/
   operations/                 role workflows, administration, backup/upgrade, troubleshooting
   reference/                  connection fields, settings, providers, MCP tools, patterns, glossary
   about/                      plans, release notes, support, licensing
-  assets/images/              product screenshots
-  stylesheets/extra.css       risk-tier badges, screenshot and caption styling
+  assets/images/              product and portal screenshots (demo data only)
+  stylesheets/extra.css       risk-tier badges, screenshot captions, Download and Subscribe buttons
+overrides/                    theme override: Download and Subscribe on every page
 .github/workflows/docs.yml    strict build on every push and PR; deploys main to Pages
 CLAUDE.md                     sources of truth, source-file map, product invariants
 CONTRIBUTING.md               writing style, page conventions, review checklist
@@ -51,7 +53,7 @@ CONTRIBUTING.md               writing style, page conventions, review checklist
 Read [`CLAUDE.md`](CLAUDE.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md) first.
 
 `CLAUDE.md` holds the facts: which product source file is authoritative for
-which claim, the ten product invariants a page must never contradict, a table of
+which claim, the eleven product invariants a page must never contradict, a table of
 known inaccuracies in the upstream user guide, and the honesty rules this site
 is written under.
 
