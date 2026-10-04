@@ -21,7 +21,10 @@ The audience is DevOps, SRE, network, platform and development engineers, with a
 specific pitch to regulated and disconnected estates (banking, defence,
 healthcare, utilities, industrial control, air-gapped networks).
 
-Current product version: **0.5.1**.
+Current product version: **0.5.1**, the **first public release**. The builds before it
+(0.1.0 to 0.5.0) were internal, so published pages never mention them: the release notes
+list public releases only, and pages describe what the product does now, not how it
+changed from an earlier version.
 
 ### Commercial and licensing facts
 
