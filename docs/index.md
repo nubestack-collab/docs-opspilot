@@ -17,18 +17,20 @@ hide:
 **AI on your terminal — including the terminals AI can't normally reach.**
 
 [Get started](getting-started/quickstart.md){ .md-button .md-button--primary }
+[Download](https://subscription.nubestack.com/download){ .md-button }
+[Pricing](https://subscription.nubestack.com/opspilot){ .md-button }
 [Why OpsPilot](overview/why-opspilot.md){ .md-button }
 
 </div>
 
-![The OpsPilot workspace: saved connections on the left, a live terminal in the centre, the AI panel on the right](assets/images/02-workspace.png){ .opspilot-hero-shot }
+![The OpsPilot workspace: saved connections with their AI badges on the left, an SSH session in the centre where a broken nginx configuration was fixed, and the AI panel on the right listing the three commands that ran, each with its risk tier, followed by a summary](assets/images/19-ai-summary.png){ .opspilot-hero-shot }
 
 OpsPilot is a desktop operations workbench — a terminal, a file manager, a
 remote-desktop client and an AI assistant in one application. You connect the way
-you always have — SSH, RDP, VNC, FTP, S3, serial, or a local shell — and OpsPilot
-watches the session with you. Ask it a question and it reads the scrollback,
-strips the secrets out locally, and brings back an explanation plus a proposed
-command.
+you always have — SSH, RDP, VNC, FTP, S3, serial, or a local shell — and in SSH
+and local shell sessions OpsPilot watches the session with you. Ask it a question
+and it reads the scrollback, strips the secrets out locally, and brings back an
+explanation plus a proposed command.
 
 !!! quote ""
     **The AI helps you operate your infrastructure. It never operates your
@@ -56,6 +58,15 @@ risk tier and showing the exact text you are about to execute. You decide.
     Requirements, installers, first run, and a five-minute quickstart.
 
     [Getting started](getting-started/index.md)
+
+-   :material-key-outline:{ .lg .middle } **Trying and buying**
+
+    ---
+
+    The 15-day free trial, subscribing, and activating online, offline or
+    for a whole site.
+
+    [Licensing](licensing/index.md)
 
 -   :material-lan-connect:{ .lg .middle } **Connecting to things**
 
@@ -113,18 +124,22 @@ work against.
     With a cloud provider, your *workstation* still talks to the internet — that
     is private or VPN-only operation, and it is what most regulated teams
     actually need. For a genuinely air-gapped deployment, point OpsPilot at a
-    local Ollama or self-hosted model and the loop closes entirely: nothing
-    leaves the machine.
+    local Ollama or self-hosted model, and license it with an offline license
+    file or an organisation-wide deployment license. The loop then closes
+    entirely: nothing leaves the machine, licensing included.
 
 ## The safety model
 
-- **The AI never gets a shell.** Proposals become commands only when you approve
-  them. This is architectural, not a setting.
+- **The AI never gets a shell.** Proposals become commands only through
+  OpsPilot's own approval path. This is architectural, not a setting.
 - **Secrets are removed locally, before anything leaves the machine.** Every
   route to a model redacts first.
-- **Your pattern list can only make things stricter.** A pattern can promote a
-  command to <span class="tier tier-high">High risk</span>; nothing can demote
-  one the model already flagged.
+- **You decide what runs without asking.** Each Command Safety profile sets
+  which commands may run without a click — none, read-only ones, or everything
+  except dangerous ones — and a command that counts as
+  <span class="tier tier-high">High risk</span> always waits for your click. By
+  default your pattern list can only make things stricter: a pattern can
+  promote a command, and nothing demotes one the model already flagged.
 
 ## See also
 
@@ -133,4 +148,4 @@ work against.
   answer in about five minutes
 - [Execution boundary & risk tiers](safety/risk-tiers.md) — read this before
   rolling OpsPilot out to a team
-- [Plans & subscription](about/plans.md) — the trial, and what it costs
+- [Licensing](licensing/index.md) — the free trial, subscribing and activation

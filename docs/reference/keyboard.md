@@ -33,7 +33,8 @@ noted.
 | Rename the active session tab | ++f2++ | ++f2++ |
 
 ++ctrl+r++ only intercepts when the active session is disconnected. While a session
-is live the key falls through to the shell, so bash reverse-i-search still works.
+is live the key falls through to the shell, so bash reverse-i-search still works. In a
+disconnected SSH tab, ++enter++ in the terminal reconnects too.
 
 ## Panels and layout
 
@@ -51,6 +52,31 @@ is live the key falls through to the shell, so bash reverse-i-search still works
 session is a connected RDP session — an embedded RDP window holds OS keyboard focus,
 so the page's own listener would never see the key. It is unregistered the moment
 that stops being true.
+
+## Connections side list
+
+The side list is a single stop when you press ++tab++: focus returns to the connection or
+group you used last. The keys below apply while it has focus.
+
+| Key | What it does |
+|---|---|
+| ++up++, ++down++, ++home++, ++end++ | Move between connections and groups |
+| ++enter++ | Opens the connection (a locked one says why), or opens or closes a group |
+| ++right++, ++left++ | On a group, open or close it. On a connection, ++right++ moves to its AI badge and ++left++ back to the connection, or to its group |
+| ++enter++ or ++space++ on the AI badge | Does what clicking the badge does |
+| ++escape++ on the AI badge | Back to the connection |
+| ++space++ | Selects the connection |
+| ++shift+f10++, or the context-menu key | Opens the connection's or group's menu |
+
+In that menu, ++up++, ++down++, ++home++ and ++end++ move, ++enter++ or ++space++
+chooses, and ++escape++ or ++tab++ closes it. A connection's menu offers **Turn AI on**
+or **Turn AI off**, the same action as its badge. A badge that only says why the license
+keeps AI off, such as **AI off · no subscription**, is not a control: the keyboard skips
+it. Holding ++enter++ on a badge uses it once.
+
+Screen readers read the list as a tree: each connection by its name and what its badge
+says, for example "quay, AI off · trial limit", and each group by its name and how many
+connections it holds.
 
 ## Terminal
 
@@ -114,12 +140,17 @@ field, and the editor's input is one.
 | Action | Key |
 |---|---|
 | Close the settings overlay | ++escape++ |
+| Close a license dialog, such as **Session limit reached** | ++escape++ |
 | Cancel an inline prompt or rename | ++escape++ |
 | Confirm an inline prompt or rename | ++enter++ |
+
+While Settings is open, ++tab++ stays inside it. A dialog opened on top of Settings
+takes ++escape++ first, so ++escape++ closes the dialog rather than the whole overlay.
 
 ## See also
 
 - [The terminal](../workspace/terminal.md) — search, output and font controls
 - [Sessions & tabs](../workspace/sessions.md) — what the tab shortcuts operate on
 - [Files & transfers](../workspace/files-and-transfers.md) — the explorer and editor
-- [Settings map](settings-map.md) — the settings these shortcuts do not replace
+- [Groups & environments](../connections/organising.md) — the side list the keys above
+  move through

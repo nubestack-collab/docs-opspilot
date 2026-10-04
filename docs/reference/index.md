@@ -7,8 +7,9 @@ pattern without reading a chapter to find it.
 If you are looking for the reasoning behind a value rather than the value
 itself, the narrative sections are the better read: [Safety &
 security](../safety/index.md) for the safety machinery, [AI](../ai/index.md) for
-the provider and assistant modes, and [Connections](../connections/index.md) for
-connecting to things.
+the provider and assistant modes, [Connections](../connections/index.md) for
+connecting to things, and [Licensing](../licensing/index.md) for the trial,
+subscribing and activation.
 
 ## The pages
 
@@ -18,9 +19,9 @@ connecting to things.
     a form and want to know why a row appeared or vanished.
 
 [Settings map](settings-map.md)
-:   Which of the seven settings pages holds which control, and what each control
-    does and defaults to. Read it when you know what you want to change but not
-    where it is.
+:   Which of the eight settings pages holds which control, and what each control
+    does and defaults to, including a full map of **Settings → License**. Read it
+    when you know what you want to change but not where it is.
 
 [AI provider matrix](provider-matrix.md)
 :   The ten providers, how each authenticates, what credential fields it asks
@@ -29,13 +30,13 @@ connecting to things.
 
 [MCP tools](mcp-tools.md)
 :   The complete tool surface an external AI Assistant gets — six tools, their
-    parameters, what they return, whether output is redacted and which one
-    requires approval. Read it during a security review of the assistant
-    integration.
+    parameters, what they return, whether output is redacted, which one
+    requires approval and when the license makes them refuse. Read it during a
+    security review of the assistant integration.
 
 [Redaction categories](redaction-categories.md)
-:   The ten built-in categories, their ids, what each matches and which five are
-    on by default. Read it when building a Data Handling profile.
+:   The eleven built-in categories, their ids, what each matches and which six
+    are on by default. Read it when building a Data Handling profile.
 
 [Dangerous patterns](dangerous-patterns.md)
 :   The default dangerous-command list in full, how substring matching works,
@@ -44,15 +45,17 @@ connecting to things.
 
 [Network requirements](network-requirements.md)
 :   Every network path the product uses, with default ports and directions, for a
-    firewall or security review. Read it when someone asks what OpsPilot needs
-    to reach.
+    firewall or security review, including the optional license server. Read it
+    when someone asks what OpsPilot needs to reach.
 
 [Keyboard shortcuts](keyboard.md)
-:   The bindings the application listens for, by panel. Read it to work faster.
+:   The bindings the application listens for, by panel, including the keys of
+    the connections side list. Read it to work faster.
 
 [Glossary](glossary.md)
-:   The product's terms, with the distinctions that matter kept sharp. Read it
-    first if a term is being used somewhere in a way you do not recognise.
+:   The product's terms, licensing terms included, with the distinctions that
+    matter kept sharp. Read it first if a term is being used somewhere in a way
+    you do not recognise.
 
 ## See also
 
@@ -60,5 +63,7 @@ connecting to things.
   are
 - [AI Providers](../ai/providers.md) — configuring a provider, rather than the
   matrix of them
+- [Licensing for IT](../licensing/for-it.md) — the managed folder and
+  `policy.json` fields
 - [Troubleshooting](../operations/troubleshooting.md) — symptom-first, when
   something is not working

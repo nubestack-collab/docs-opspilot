@@ -8,6 +8,8 @@ copyright: Copyright &copy; NubeStack. All rights reserved.
 
 theme:
   name: material
+  # Download and Subscribe buttons on every page (announcement bar and the box under each page): overrides/.
+  custom_dir: overrides
   language: en
   favicon: assets/images/opspilot-favicon.svg
   logo: assets/images/opspilot-mark.svg
@@ -109,6 +111,12 @@ nav:
       - Install: getting-started/install.md
       - First run: getting-started/first-run.md
       - Quickstart: getting-started/quickstart.md
+  - Licensing:
+      - licensing/index.md
+      - Free trial and limits: licensing/trial-and-limits.md
+      - Subscribe: licensing/subscribe.md
+      - Activate OpsPilot: licensing/activation.md
+      - Licensing for IT: licensing/for-it.md
   - Connections:
       - connections/index.md
       - Add a connection: connections/adding-connections.md
@@ -164,3 +172,5 @@ nav:
       - Release notes: about/release-notes.md
       - Support: about/support.md
       - Privacy & licensing: about/licensing.md
+  - Download: https://subscription.nubestack.com/download
+  - Pricing: https://subscription.nubestack.com/opspilot

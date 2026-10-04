@@ -105,3 +105,90 @@
   width: 100%;
   margin: 0 auto 2.5rem;
 }
+
+/* Calls to action on every page (overrides/main.html, overrides/partials/opspilot-cta.html).
+   Brand teal from the hero mark; works on both the light and the dark (slate) scheme. */
+:root {
+  --opspilot-brand: #2f7a76;
+  --opspilot-brand-strong: #25625f;
+}
+.opspilot-announce {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+  font-size: 0.72rem;
+}
+.opspilot-announce__actions {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+.md-banner .opspilot-announce__link,
+.md-banner .opspilot-announce__link:visited {
+  display: inline-block;
+  padding: 0.1rem 0.7rem;
+  border: 1px solid currentcolor;
+  border-radius: 1rem;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+.md-banner .opspilot-announce__link--primary,
+.md-banner .opspilot-announce__link--primary:visited {
+  background: #4ade80;
+  border-color: #4ade80;
+  color: #0b2b1a;
+}
+.md-banner .opspilot-announce__link:hover {
+  opacity: 0.85;
+}
+.md-typeset .opspilot-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin: 2.5rem 0 0.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--opspilot-brand);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: var(--md-code-bg-color);
+}
+.md-typeset .opspilot-cta__text {
+  flex: 1 1 22rem;
+}
+.md-typeset .opspilot-cta__text p {
+  margin: 0.2rem 0;
+}
+.md-typeset .opspilot-cta__title {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.md-typeset .opspilot-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.md-typeset .opspilot-cta .md-button {
+  margin: 0;
+  border-color: var(--opspilot-brand);
+  color: var(--opspilot-brand);
+}
+[data-md-color-scheme="slate"] .md-typeset .opspilot-cta .md-button {
+  color: #7fd1c8;
+  border-color: #7fd1c8;
+}
+.md-typeset .opspilot-cta .md-button--primary,
+[data-md-color-scheme="slate"] .md-typeset .opspilot-cta .md-button--primary {
+  background: var(--opspilot-brand);
+  border-color: var(--opspilot-brand);
+  color: #fff;
+}
+.md-typeset .opspilot-cta .md-button:hover,
+.md-typeset .opspilot-cta .md-button:focus {
+  background: var(--opspilot-brand-strong);
+  border-color: var(--opspilot-brand-strong);
+  color: #fff;
+}

@@ -13,15 +13,17 @@ confirming it came up.
 
 1. Write the code in your usual place — Codex, Claude Code, or your IDE. OpsPilot is not
    an editor for this step.
-2. In OpsPilot, open a session on the target environment. If the environment tag is
-   **Staging** or **Lab**, the group's Command Safety profile is already resolving behind
-   the session; you do not set anything per session.
+2. In OpsPilot, open a session on the target environment. If the connection sits in a
+   **Staging** or **Lab** group, the group's Command Safety profile is already resolving
+   behind the session; you do not set anything per session.
 3. Pull and build: `git pull && npm ci && npm run build`. That lands as
-   <span class="tier tier-low">Low risk</span> — one click to approve, no typed reason.
-4. Deploy: `systemctl restart app`. Also <span class="tier tier-low">Low risk</span>, one
-   click. If your production Command Safety profile lists `systemctl stop` as a dangerous
-   pattern, note that a restart and a stop are different strings — decide deliberately
-   which one you want in the list.
+   <span class="tier tier-low">Low risk</span>. Under the shipped rule, **Ask me every
+   time**, that is one click to approve and no typed reason. A Lab profile set to
+   **Everything except dangerous ones** runs it with no click at all.
+4. Deploy: `systemctl restart app`. Also <span class="tier tier-low">Low risk</span>. If
+   your production Command Safety profile lists `systemctl stop` as a dangerous pattern,
+   note that a restart and a stop are different strings — decide deliberately which one
+   you want in the list.
 5. Verify by asking, rather than by reading: *"did the service come up cleanly?"* The
    assistant reads the session scrollback, which is redacted locally before it goes
    anywhere, and answers.
@@ -40,18 +42,23 @@ half cannot.
 1. The alert fires. Open the affected hosts as sessions — several at once, in the session
    tab bar.
 2. Ask the obvious first question: *"what changed in the last hour on this host?"*
-3. The read-only investigation runs. With **Auto-run safe commands** on, the
+3. The read-only investigation runs. Where the session's Command Safety profile has
+   **Run commands without asking me** set to **Only read-only commands**, the
    `journalctl`, `ls`, `git log` and `systemctl status` style commands execute without a
-   click, and you read results instead of approving steps. Auto-run ships off and applies
-   to the whole workstation, so enable it only if this machine does not also reach
-   production.
+   click, and you read results instead of approving steps. The setting belongs to the
+   profile, so it applies only to the groups and connections using that profile; every
+   profile ships as **Ask me every time**. The chip under the AI panel's input box
+   (**Auto-run off**, **Auto-run read-only** or **Auto-run all**) says which applies to
+   the tab you are in.
 4. Correlate across hosts by asking about each session in turn. The assistant keeps the
    thread per session; no combined cross-host view is assembled.
 5. The remediation arrives tiered. A read of a config file is
    <span class="tier tier-readonly">Read-only</span>. A service restart is
    <span class="tier tier-low">Low risk</span>. Anything matching your dangerous-pattern
-   list, or anything the model flagged itself, is
-   <span class="tier tier-high">High risk</span> and stops for a typed justification.
+   list, or anything the model flagged itself (under the shipped **The AI's warning and my
+   list**), is <span class="tier tier-high">High risk</span>. A High risk command always
+   stops for a click, and for a typed justification while **Make me type a reason for
+   dangerous commands** is on, which is how profiles ship.
 
 The justification is recorded with the command, on the card next to the exact command text
 you ran. The card also states *why* the command was flagged: the matched pattern and the
@@ -62,15 +69,20 @@ profile it came from, or that the model flagged it itself.
 Switches and routers are the part of an estate least likely to have AI access at all, and
 the place where the blast radius of a wrong line is largest.
 
-1. Telnet or serial to the switch. Nothing is installed on the device.
-2. Paste the configuration diff into the AI panel, or let the assistant read the
-   scrollback from the session you are already in.
+1. Connect to the switch — SSH where the device has it, Telnet or serial for older gear.
+   Nothing is installed on the device.
+2. In an SSH session, let the assistant read the scrollback of the session you are
+   already in. AI works in SSH and Local Console tabs, not in Telnet or serial ones, so
+   for those paste the configuration diff into the AI panel of a Local Console tab.
 3. Ask what changed and what the blast radius is. This is the read-only half, and on a
    network device it is usually the whole job.
 4. A proposed change to a core router will match your dangerous patterns and stop for
    justification. The classification is asymmetric: a pattern can push a command up to
-   <span class="tier tier-high">High risk</span>, and nothing — not the model, not a
-   prompt, not a setting — can pull one back down.
+   <span class="tier tier-high">High risk</span>, and no pattern pulls one back down.
+   With **What counts as a dangerous command** left at **The AI's warning and my list**,
+   a command the model flagged also stays High risk whatever your list says. **Only my
+   list** makes your list the only judge, and the model's warning is then only shown as
+   a note on the card — keep the shipped choice on profiles for network gear.
 
 Telnet and RSH carry credentials and session content in clear text. That is a property of
 the protocols, not of OpsPilot; see [connection types](../connections/connection-types.md)
@@ -99,12 +111,14 @@ realistic set looks like this:
 
 | Group | Command Safety | Data Handling |
 |---|---|---|
-| Production | Strict, full pattern list, confirmation on | Strict — also scrubs hostnames and IPs |
-| Staging | Moderate, full pattern list | Moderate |
-| Lab | Permissive | Minimal |
+| Production | **Ask me every time**, the AI's warning and my list, full pattern list, typed reason on | Strict — also scrubs hostnames and IPs |
+| Staging | **Only read-only commands**, the AI's warning and my list, full pattern list | Moderate |
+| Lab | **Only read-only commands** or **Everything except dangerous ones**, shorter list | Minimal |
 
-Auto-run sits outside both profiles: it is one switch for the workstation, so it
-cannot be set per group. Leave it off where the same machine reaches production.
+Each Command Safety profile carries its own **Run commands without asking me** choice, so
+auto-run is set per group: the same workstation can run read-only commands by itself on
+staging and ask about every command on production. A dangerous command needs a click
+under every profile.
 
 The same assistant then behaves differently in each group without anyone changing a
 setting when they switch tabs.
@@ -112,7 +126,9 @@ setting when they switch tabs.
 - Profiles resolve **connection → group → Default**, and they are *replacements*, not
   additions. A `Lab` profile can legitimately be less strict than `Default`.
 - Because they are replacements, assigning a permissive profile to a production group
-  silently loosens it. Keep that on your review list.
+  silently loosens it, including what may run without a click. Keep that on your review
+  list. Saving a profile set to **Everything except dangerous ones** or **Only my list**
+  asks you to confirm first (**Check these rules before saving**).
 
 Profiles are configured per workstation and are not pushed to other workstations from
 inside the product, so standardising them across a team is an organisational process —
@@ -122,7 +138,7 @@ in practice.
 ## See also
 
 - [Administration & rollout](administration.md) — phasing this across a team
-- [Command Safety profiles](../safety/command-safety-profiles.md) — patterns, confirmation
-  and precedence
+- [Command Safety profiles](../safety/command-safety-profiles.md) — patterns, the three
+  rules and precedence
 - [Approvals & auto-run](../safety/approvals.md) — what each tier asks of the engineer
 - [Organising connections](../connections/organising.md) — groups and environment tags
