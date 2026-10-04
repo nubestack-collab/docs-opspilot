@@ -1,22 +1,27 @@
 # AI Providers
 
 An AI Provider is a model endpoint you supply the credential for. Configure one
-and OpsPilot's own AI panel comes to life: terminal analysis, error diagnosis and
-the chat panel all run through the provider you made active. Ten providers ship
-built in, and one of them never leaves your machine.
+and OpsPilot's own AI panel comes to life on SSH and Local Console tabs: terminal
+analysis, error diagnosis and the chat panel all run through the provider you made
+active. Ten providers ship built in, and one of them never leaves your machine.
 
-![The AI Providers catalogue listing ten supported providers](../assets/images/03-ai-providers.png)
+AI features need an active free trial or subscription. During the trial, AI is on for
+2 of your connections at a time, which you choose; after the trial without a
+subscription, AI is off and your provider settings are kept until you subscribe. See
+[Free trial and limits](../licensing/trial-and-limits.md).
 
-*The AI Providers page. Ten providers ship; the credential fields differ per
-provider, and **Test** verifies them before you save.*
+![Settings, AI Providers: Custom / Self-hosted shown as the active provider at the top, then the list of providers from Anthropic Claude to OpenRouter, each marked Not set up](../assets/images/26-settings-ai-providers.png)
+_The active provider is shown at the top, with its model. Every provider without a
+credential shows **Not set up**; click a row to open its fields._
 
 ## Configuring a provider
 
 Open **Settings → AI Providers**. Each provider row expands to its own fields.
-Enter the credential, pick a model, click **Test**, then **Save**. The active
-provider is used for terminal analysis, error diagnosis and the AI chat panel.
+Enter the credential, pick a model, click **Test Connection**, then
+**Save & Activate**. The active provider is used for terminal analysis, error
+diagnosis and the AI chat panel.
 
-**Test** checks the credential against the provider's own API and surfaces the
+**Test Connection** checks the credential against the provider's own API and surfaces the
 provider's error message verbatim, so an invalid key or a model you do not have
 access to fails there rather than in the middle of an incident.
 
@@ -51,7 +56,7 @@ you a code, you approve it in a browser against your GitHub account, and the
 access token is filled into the credential field for you. Requests go to
 GitHub's fixed Copilot API endpoint — there is no base URL to set.
 
-Useful if your organisation already licences Copilot and would rather not
+Useful if your organisation already licenses Copilot and would rather not
 procure a second AI budget line.
 
 ### Azure OpenAI
@@ -86,7 +91,7 @@ live catalogue of free models when it can; if the refresh fails you keep the
 cached list.
 
 OpenRouter's model catalogue is public and answers successfully for any key,
-including an invalid one, so **Test** checks the key against an endpoint that
+including an invalid one, so **Test Connection** checks the key against an endpoint that
 requires authentication instead.
 
 ### Custom / Self-hosted
@@ -99,11 +104,20 @@ cannot know what you have loaded; the catalogue ships no model list for it.
 Use this for vLLM, LM Studio, a llama.cpp server, LocalAI, or an internal AI
 gateway. See [Self-hosted & enterprise](self-hosted.md).
 
+## Running commands without a click
+
+The setting that lets commands run without a click is not under **Settings → AI
+Providers**. It is **Run commands without asking me** in **Settings → Security → Command
+Safety**, set per Command Safety profile, and it covers commands from a provider and from
+a connected AI Assistant alike. The **Provider Behavior** group below the provider list
+says where it went. See [Approvals & auto-run](../safety/approvals.md).
+
 ## What configuring a provider does not change
 
-- The model still cannot execute anything. Its reply is a proposal, and a
-  proposal becomes a command only when you approve it. No provider, model or
-  setting changes that.
+- The model still cannot execute anything. Its reply is a proposal, and OpsPilot
+  runs it only when you approve it, or when the session's Command Safety profile
+  lets that kind of command run without a click. A dangerous command always needs
+  your click. No provider, model or setting gives a model a shell.
 - Redaction still runs first, using the Data Handling profile resolved for the
   connection you asked about.
 - AI access is still scoped per connection. **Enable AI** on the connection is
@@ -115,7 +129,8 @@ gateway. See [Self-hosted & enterprise](self-hosted.md).
     Configuring any provider other than Ollama or a self-hosted endpoint means
     your workstation reaches that provider over the internet. Your *servers*
     still do not, which is what most regulated teams need — but call it private
-    or VPN-only, not air-gapped.
+    or VPN-only, not air-gapped. Air-gapped use needs a local model and a license
+    that needs no network either; see [Offline with Ollama](offline-ollama.md).
 
 ## See also
 

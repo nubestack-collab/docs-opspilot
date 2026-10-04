@@ -34,13 +34,12 @@ guest's own network configuration is not involved, which is why this works on a
 machine that has lost it.
 
 ![Creating a KVM hypervisor console connection with the VM list populated](../assets/images/12-kvm-console.png)
-
-*Target set to **Hypervisor VM — KVM**. The host and credentials above are the
+_Target set to **Hypervisor VM — KVM**. The host and credentials above are the
 KVM host's SSH login; **List VMs** has enumerated the guests through `virsh`,
-including the ones that are shut off.*
+including the ones that are shut off._
 
-Attaching can fail for three reasons, and each is reported with the hypervisor's
-own error text rather than a generic message:
+When attaching fails, the reason is reported with the hypervisor's own error text
+rather than a generic message:
 
 - `virsh` is not installed, or the SSH user is not permitted to talk to
   `qemu:///system`. The fix differs — install the libvirt client, add the user to
@@ -76,10 +75,9 @@ ticket from Nova itself and connects through that, so there is no URL to copy ou
 of Horizon and no token to paste anywhere.
 
 ![Creating an OpenStack Nova console connection showing Keystone authentication and the instance list](../assets/images/13-openstack-console.png)
-
-*Target set to **Hypervisor VM — OpenStack**. Keystone authentication has its own
+_Target set to **Hypervisor VM — OpenStack**. Keystone authentication has its own
 panel, the TLS checkbox is the single place certificate trust is decided, and
-**List VMs** has queried Nova for the project's instances.*
+**List VMs** has queried Nova for the project's instances._
 
 OpsPilot re-authenticates to Keystone on each call rather than holding a token,
 so a long-lived connection does not fail later because a token expired. If Nova
@@ -90,6 +88,21 @@ remote console access — the error comes back as Nova worded it.
     Reaching a console through the hypervisor authenticates you to the
     *hypervisor*. If the VM's graphical console has its own VNC password, that is
     separate, and you are prompted for it when the console asks.
+
+## Working in a console tab
+
+- **Ctrl+Alt+Delete.** Your own operating system catches that key combination
+  before OpsPilot sees it. Use the keyboard button in the header above the
+  console, **Send Ctrl+Alt+Delete**, to send it to the virtual machine.
+- **Clipboard.** Text copied inside the VM lands on your clipboard. Press
+  **Ctrl+Shift+V** to send the text on your clipboard to the VM.
+- **Reconnecting.** When the console drops, the tab says **Disconnected. (click to
+  retry)**. Clicking it, or pressing Ctrl+R, looks up the console again from the
+  hypervisor rather than reusing the old address, because a VM's console port can
+  change when it restarts.
+- **Session count.** A console tab is a session like any other. During the free
+  trial and without a subscription it counts toward the 10 sessions you can have
+  open at once; see [Free trial and limits](../licensing/trial-and-limits.md).
 
 ## See also
 

@@ -18,8 +18,10 @@ overstate what the product does.
 
 - **Plain, declarative prose.** Say what happens, in what order, and what the
   reader has to decide. Second person for instructions.
-- **British spelling** — organise, colour, behaviour, licence (noun) /
-  license (verb), sanitise.
+- **British spelling** — organise, organisation, colour, behaviour, sanitise — with
+  one exception: **"license" for both noun and verb**, because the product and the
+  subscription site use it ("Settings → License", "Import license file", "license
+  key"). Never write "licence".
 - **Sentence case for all headings**, including table headers.
 - **No marketing register.** No "seamlessly", "effortlessly", "powerful",
   "cutting-edge", "revolutionary", "game-changing", "robust", "leverage",
@@ -52,7 +54,7 @@ product manual, and it reads as a machine narrating its inputs.
 | "The sources for this documentation do not record a release date, so none is stated here." | *Nothing.* Omit the date. |
 | "The user guide says X, but the product actually does Y." | "The product does Y." |
 | "This page says which files those are." | *Nothing.* Just say which files. |
-| "The sources do not describe a self-service purchase page, so this page does not invent one." | "To subscribe, contact NubeStack through your support channel." |
+| "The sources do not say when the macOS installer ships, so this page does not give a date." | "macOS installers are not on the download page yet; email support@nubestack.com to hear when they are." |
 | "and so does this page" / "this documentation does not call it one" | *Nothing.* |
 | "The guide records this as an open item." | *Nothing*, or state the behaviour plainly. |
 
@@ -222,36 +224,74 @@ exists.
 Screenshots live in `docs/assets/images/` and are referenced relatively:
 
 ```markdown
-![The AI Providers catalogue listing ten supported providers](../assets/images/03-ai-providers.png)
-
-*The AI Providers page. Ten providers ship; the credential fields differ per
-provider, and **Test** verifies them before you save.*
+![Settings → AI Providers with the active provider at the top and the others listed as Not set up](../assets/images/26-settings-ai-providers.png)
+_The AI Providers page. The provider in use sits at the top marked **Active**; open
+another to enter its details, then **Test Connection** before **Save & Activate**._
 ```
 
 - Alt text describes what is in the image, for someone who cannot see it.
 - The italic line directly under an image is styled as a caption by
-  `extra.css`. Use it to say what the reader should notice — not to repeat the
-  alt text.
+  `extra.css`. Write it with underscores (`_…_`), on the line **immediately after**
+  the image, with no blank line between them: the caption style only applies when
+  the two share a paragraph. Inside a numbered list, indent both lines four spaces.
+  Use it to say what the reader should notice — not to repeat the alt text.
+- Where a step needs a screenshot that does not exist yet, leave a comment on its
+  own line, `<!-- screenshot: what the image should show -->`, instead of a broken
+  reference.
 - Each screenshot has an owning page (see the table below). Reuse an image on a
   second page only when it genuinely earns its place there.
 
-| Image | Owning page |
+| Image | Used on |
 |---|---|
-| `00-first-run.png` | `getting-started/first-run.md` |
-| `01-connections.png` | `connections/organising.md` |
-| `02-workspace.png` | `index.md` and `overview/what-is-opspilot.md` |
-| `03-ai-providers.png` | `ai/providers.md` |
-| `04-ai-assistants.png` | `ai/assistants.md` |
-| `05-command-safety.png` | `safety/command-safety-profiles.md` |
-| `07-redaction-editor.png` | `safety/data-handling-profiles.md` |
-| `08-approvals.png` | `safety/risk-tiers.md` |
-| `09-new-connection.png` | `connections/adding-connections.md` |
-| `10-explorer-editor.png` | `workspace/files-and-transfers.md` |
 | `11-rdp-connection.png` | `connections/remote-desktop.md` |
 | `12-kvm-console.png` | `connections/hypervisor-consoles.md` |
 | `13-openstack-console.png` | `connections/hypervisor-consoles.md` |
+| `14-trial-first-launch.png` | `connections/organising.md`, `getting-started/first-run.md`, `getting-started/quickstart.md`, `licensing/trial-and-limits.md` |
+| `15-new-connection.png` | `connections/adding-connections.md`, `getting-started/quickstart.md` |
+| `16-ssh-session.png` | `ai/using-the-ai-panel.md`, `connections/adding-connections.md`, `getting-started/quickstart.md` |
+| `17-ai-readonly-proposal.png` | `ai/using-the-ai-panel.md`, `getting-started/quickstart.md` |
+| `18-ai-low-risk-proposal.png` | `ai/using-the-ai-panel.md`, `safety/risk-tiers.md` |
+| `19-ai-summary.png` | `ai/using-the-ai-panel.md`, `index.md`, `overview/what-is-opspilot.md` |
+| `20-ai-high-risk.png` | `ai/using-the-ai-panel.md`, `getting-started/quickstart.md`, `safety/approvals.md`, `safety/risk-tiers.md` |
+| `21-trial-ai-dialog.png` | `connections/organising.md`, `licensing/trial-and-limits.md` |
+| `22-session-limit.png` | `licensing/trial-and-limits.md`, `operations/troubleshooting.md`, `workspace/sessions.md` |
+| `23-trial-ai-off-tab.png` | `licensing/trial-and-limits.md`, `workspace/sessions.md` |
+| `24-license-trial.png` | `getting-started/quickstart.md`, `licensing/activation.md`, `licensing/trial-and-limits.md`, `reference/settings-map.md` |
+| `25-license-activate-offline.png` | `licensing/activation.md` |
+| `26-settings-ai-providers.png` | `ai/providers.md`, `getting-started/quickstart.md` |
+| `27-settings-ai-assistants.png` | `ai/assistants.md` |
+| `28-settings-command-safety.png` | `getting-started/quickstart.md`, `reference/settings-map.md`, `safety/approvals.md` |
+| `29-command-safety-profile-editor.png` | `reference/dangerous-patterns.md`, `safety/command-safety-profiles.md` |
+| `30-data-handling-editor.png` | `reference/redaction-categories.md`, `safety/data-handling-profiles.md` |
+| `31-settings-about.png` | `about/support.md`, `reference/settings-map.md` |
+| `32-locked-connections.png` | `connections/organising.md`, `licensing/trial-and-limits.md`, `operations/troubleshooting.md` |
+| `34-connection-menu.png` | `connections/organising.md` |
+| `35-explorer-editor.png` | `workspace/files-and-transfers.md` |
+| `36-port-forward.png` | `workspace/tools.md` |
+| `37-system-monitor.png` | `workspace/tools.md` |
+| `38-snippets.png` | `workspace/tools.md` |
+| `39-tools.png` | `workspace/tools.md` |
+| `40-insights.png` | `workspace/tools.md` |
+| `41-license-device-limit.png` | `licensing/activation.md`, `operations/troubleshooting.md` |
+| `42-license-licensed.png` | `licensing/activation.md`, `operations/backup-and-upgrade.md`, `reference/settings-map.md` |
+| `43-licensed-main.png` | `licensing/trial-and-limits.md` |
+| `44-portal-overview.png` | `licensing/subscribe.md` |
+| `45-portal-seats.png` | `licensing/subscribe.md` |
+| `46-portal-devices.png` | `licensing/activation.md` |
+| `47-portal-offline.png` | `licensing/activation.md`, `licensing/for-it.md` |
+| `48-portal-offline-done.png` | `licensing/activation.md` |
+| `49-portal-deployments.png` | `licensing/for-it.md` |
+| `50-portal-billing.png` | `licensing/subscribe.md` |
+| `51-portal-seat.png` | `licensing/subscribe.md` |
+| `52-site-pricing.png` | `licensing/subscribe.md` |
+| `53-site-download.png` | `getting-started/install.md` |
 
-The numbering skips `06`. That is expected — do not renumber.
+`11` to `13` came from the product repository's own `docs/images/`; `14` onwards were taken
+for the 0.5.1 refresh from an isolated copy of OpsPilot with demo connections only (demo
+hosts on `127.0.0.x`, a local test AI endpoint) and from a local copy of the NubeStack
+portal with demo data. Never take a screenshot that shows a real customer's or your own
+connections, hosts, keys or device codes. New screenshots continue from the next free
+number; add the row here in the same change.
 
 ### Risk-tier badges
 
@@ -295,6 +335,20 @@ categories and tiers, and this documentation uses a lot of them. Keep column
 headers in sentence case, keep the leftmost column the thing being looked up,
 and do not let a table exceed about five columns.
 
+### Calls to action
+
+Every page gets **Download** and **Subscribe** buttons from the theme override in
+`overrides/`. Do not add your own call-to-action blocks; link
+`https://subscription.nubestack.com/download` or
+`https://subscription.nubestack.com/opspilot` in prose where a reader needs them. To
+hide the buttons on one page, set `hide_cta: true` in its front matter:
+
+```markdown
+---
+hide_cta: true
+---
+```
+
 ### Mermaid
 
 `mermaid` fenced blocks are configured and render. Prefer the plain-text ASCII
@@ -320,9 +374,17 @@ Use these exactly. The distinctions are load-bearing.
 | group (a folder of connections that carries policy) | "folder" |
 | session | "connection", when you mean an open one |
 | connection (a saved definition) | "host", when you mean the saved entry |
-| private / VPN-only | "air-gapped", unless a local model is in use |
+| private / VPN-only | "air-gapped", unless a local model and offline activation or a deployment license are in use |
 | workstation | "client", "agent" |
 | redaction | "masking", "filtering", "anonymisation" |
+| license (noun and verb), license key, license file | "licence", "serial", "token" |
+| seat (one person, up to 2 devices) | "user licence", "named user" |
+| activate online / activate offline | "register", "sign in to OpsPilot" |
+| request code (goes out) / license file (comes back) | "activation code" |
+| device code (six characters such as `R59-EFG`) | "device ID", "fingerprint" |
+| deployment license (one file for the whole organisation) | "site licence", "volume key" |
+| sessions open at once | "concurrent connections", when you mean the limit |
+| whoever manages licenses in your organisation | "your administrator", "your NubeStack administrator" |
 
 OpsPilot installs nothing on target hosts. Never write "agent", "daemon" or
 "sidecar" in a way that suggests it does.
@@ -342,7 +404,8 @@ Then check your change against this list:
 - [ ] No stub admonition left behind on a page you were meant to write.
 - [ ] Every factual claim traces to a source in `CLAUDE.md`'s source map — no
       invented paths, flags, versions, prices, shortcuts or URLs.
-- [ ] None of the ten product invariants in `CLAUDE.md` is contradicted.
+- [ ] None of the product invariants in `CLAUDE.md` is contradicted.
+- [ ] No page adds its own Download or Subscribe block (the theme adds them).
 - [ ] Limitations stated plainly rather than omitted.
 - [ ] Terminology table followed.
 - [ ] Images have alt text and a caption, and are referenced relatively.

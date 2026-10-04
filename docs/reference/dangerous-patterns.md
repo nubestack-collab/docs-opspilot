@@ -53,21 +53,23 @@ pattern matches when the command contains it, whatever the case. So `rm -rf` mat
 matches any recursive `chown` anywhere in the command, including a harmless one.
 Substring matching is blunt in both directions.
 
-**A match can only add the dangerous classification.** If the model already marked a
-command dangerous, the classification stands and the matched pattern is recorded
-alongside it. If the model marked it safe and a pattern matches, the command is
-promoted to dangerous and the safe marking is cleared. Nothing in the list, and
-nothing you can put in it, can demote a command the model flagged.
+**A match can only add the dangerous classification.** If a pattern matches, the
+command is dangerous and any safe marking from the model is cleared. Nothing in the
+list, and nothing you can put in it, can demote a command.
 
-**It is an independent safety net, not the primary classifier.** The model
-self-reports whether each proposal is dangerous. The pattern list is a second, local
-check on top of that, so a model mistake, or prompt injection arriving through
-terminal output, is not the only thing standing between a destructive command and a
-one-click execution.
+**Whether the model's own warning counts is a profile setting.** Each Command Safety
+profile has **What counts as a dangerous command**:
 
-The approval card says which of the two fired — the model's own assessment or a
-pattern match — and where a pattern fired it also names the pattern and the profile
-it came from.
+| Choice | What decides "dangerous" |
+|---|---|
+| **The AI's warning and my list** (shipped) | Either one is enough. A command the model flagged stays dangerous whatever the list says, and a matched pattern is recorded alongside the model's flag. The list is an independent safety net on top of the model, so a model mistake, or prompt injection arriving through terminal output, is not the only thing standing between a destructive command and an unattended run |
+| **Only my list** | The list is the only classifier. If the model warns that a command is destructive, the card shows "The AI flagged this command as destructive. This connection's Command Safety profile only treats your own patterns as dangerous, so that warning was not applied." With an empty list, nothing counts as dangerous |
+
+A dangerous command always needs a click, under every setting, and a typed reason while
+the profile's **Make me type a reason for dangerous commands** is on.
+
+The approval card says which fired — the model's own assessment or a pattern match —
+and where a pattern fired it also names the pattern and the profile it came from.
 
 ## Why substrings and not regexes
 
@@ -85,9 +87,17 @@ them to go wrong. See [Redaction categories](redaction-categories.md).
 
 Patterns live in a Command Safety profile, not in a global setting. Edit the
 **Default** profile's list, or clone it into a named profile, at
-**Settings → Security → Command Safety → Manage profiles…**. The editor has an
-**Add** field, a **Reset to defaults** button and a per-profile
-**Require a written reason for dangerous commands** toggle.
+**Settings → Security → Command Safety → Manage profiles…**. The editor holds the
+profile's three rules — **Run commands without asking me**, **What counts as a
+dangerous command** and **Make me type a reason for dangerous commands** — above the
+pattern list, an **Add** field, and **Reset to defaults**, which restores the default
+patterns and the cautious rules (**Ask me every time**, **The AI's warning and my
+list**, typed reason on). Nothing is kept until you choose **Save**.
+
+![The Default Command Safety profile editor: the three rules, the What this means right now panel, the pattern list starting with rm -rf, Add, and Reset to defaults](../assets/images/29-command-safety-profile-editor.png)
+_The editor for the Default profile. The rules and the summary sit above the list, so
+the effect of a change is visible before **Save**; the list holds the 21 default
+patterns._
 
 Resolution is connection → group → Default:
 

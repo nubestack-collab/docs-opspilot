@@ -1,7 +1,7 @@
 # Redaction categories
 
-The ten built-in redaction categories, their ids and what each one matches. The id is
-what a Data Handling profile stores and what you select in the profile editor; the
+The eleven built-in redaction categories, their ids and what each one matches. The id
+is what a Data Handling profile stores and what you select in the profile editor; the
 label is what the editor shows beside it.
 
 | Id | Label | Default | Matches |
@@ -11,15 +11,20 @@ label is what the editor shows beside it.
 | `bearer_token` | Bearer tokens | On | The literal `Bearer`, whitespace, then the token |
 | `jwt` | JWTs | On | `eyJ` then three base64url segments joined by dots |
 | `password_assignment` | Password/secret assignments | On | `password`, `passwd`, `pwd` or `secret`, then `=` or `:`, then the value. Case-insensitive |
+| `nubestack_license_key` | NubeStack license keys | On | An OpsPilot license key: `OPSP-` and five groups of five letters or digits, also written without dashes or with spaces between the groups. Also a key with any other 2- to 6-letter prefix followed by a dash and the same five groups, the shape other NubeStack products use. Case-insensitive |
 | `ipv4` | IPv4 addresses | Off | A dotted quad with each octet range-checked to 0–255 |
 | `ipv6` | IPv6 addresses | Off | Full eight-group form and the common `::`-compressed forms |
 | `uuid` | UUIDs | Off | The standard 8-4-4-4-12 hex UUID/GUID form |
 | `email` | Email addresses | Off | The standard `user@domain.tld` form |
 | `hostname` | Hostnames / FQDNs | Off | Dotted hostnames, e.g. `bastion-1.devops.internal` |
 
-Five on, five off. The five that are on are the ones whose false-positive cost is
-effectively zero: an `AKIA…` string, a PEM block, a `Bearer` header, a JWT or a
-`password=` assignment is a secret and nothing else.
+Six on, five off. The six that are on are the ones whose false-positive cost is
+effectively zero: an `AKIA…` string, a PEM block, a `Bearer` header, a JWT, a
+`password=` assignment or an `OPSP-…` license key is a secret and nothing else.
+
+A license key activates a device, so one echoed in a terminal — a deployment script, a
+`policy.json` being written — is removed before anything reaches a model. An offline
+request code and a device code such as `R59-EFG` are not matched: neither is secret.
 
 ## Structural categories
 
@@ -74,6 +79,10 @@ replaces rather than extends, so a profile can legitimately be less strict than
 Default. A category missing from a saved profile — because the profile predates the
 category — falls back to that category's own default state rather than being
 dropped.
+
+![The Default Data Handling profile editor: eleven built-in categories, six switched on and five off, with the custom pattern fields below](../assets/images/30-data-handling-editor.png)
+_The Default profile as it ships: the six secret categories on, **NubeStack license keys**
+among them, and the five structural ones off. Custom patterns go in the fields below._
 
 Redaction itself is not a toggle. It happens on one code path, before anything
 leaves the machine, for a configured provider and a connected assistant alike.

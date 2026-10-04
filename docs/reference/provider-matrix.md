@@ -1,7 +1,8 @@
 # AI provider matrix
 
 The ten providers OpsPilot ships, how each one authenticates and what it asks you
-for. Each is one card on **Settings → AI Providers**.
+for. Each is one card on **Settings → AI Providers**. Using any of them needs an active
+free trial or subscription; see [Licensing](../licensing/index.md).
 
 ## Authentication, credentials and endpoints
 
@@ -58,21 +59,21 @@ pointed at, listed or not.
 | Custom / Self-hosted | None — you type the model name |
 
 !!! note "Model lists go stale"
-    These are the lists compiled into 0.1.0. The authoritative list is the one in the
-    app's own model picker, and for OpenRouter it is fetched live from the provider.
-    Treat this table as what shipped, not as what is currently available from each
+    These are the lists built into OpsPilot 0.5.1. The authoritative list is the one in
+    the app's own model picker, and for OpenRouter it is fetched live from the provider.
+    Treat this table as what ships, not as what is currently available from each
     vendor.
 
 !!! note "Pick the model in the app, and pull it before you test"
     Always select the model from the provider card's own picker rather than typing a
-    name from a document — model lineups change, and the picker is what **Test**
-    validates against.
+    name from a document — model lineups change, and the picker is what
+    **Test Connection** validates against.
 
     This matters most for **Ollama**. The picker's entries are the tags OpsPilot
     expects, `llama3.3` among them, and Ollama does not accept a typed model name.
-    **Test** checks your selection against the models Ollama reports, so pull the
-    exact tag you intend to select — a model you have not pulled fails the test
-    rather than failing later during an incident.
+    **Test Connection** checks your selection against the models Ollama reports, so
+    pull the exact tag you intend to select — a model you have not pulled fails the
+    test rather than failing later during an incident.
 
 ### OpenRouter's fallback list
 
@@ -91,15 +92,15 @@ mistralai/mistral-small-24b-instruct-2501:free
 
 ## Per-provider notes
 
-**OpenRouter's Test verifies against an authenticated endpoint.** OpenRouter's model
-catalogue is public and returns success for any key, including a fake one, so it
-cannot validate anything. **Test** uses an endpoint that requires real
-authentication and returns 401 on a bad key, which is what makes the result
-meaningful.
+**OpenRouter's Test Connection verifies against an authenticated endpoint.**
+OpenRouter's model catalogue is public and returns success for any key, including a
+fake one, so it cannot validate anything. **Test Connection** uses an endpoint that
+requires real authentication and returns 401 on a bad key, which is what makes the
+result meaningful.
 
 **GitHub Copilot and Azure OpenAI use a device authorisation grant.** You are shown
 a code, you approve it in a browser, and no redirect listener is needed. Copilot's
-**API Key** field is filled in for you on sign-in; Azure's can be either the device
+**Access Token** field is filled in for you on sign-in; Azure's can be either the device
 flow or a pasted key from Azure AI Foundry.
 
 **Gemini offers two routes.** Full OAuth 2.0 authorisation code with PKCE, where the
@@ -107,15 +108,16 @@ browser opens and you click Allow, or a pasted AI Studio key for anyone who woul
 rather not sign in.
 
 **Ollama needs no credential at all.** Its only field is the endpoint, and it is the
-option that makes genuinely air-gapped operation possible. See [Offline with
-Ollama](../ai/offline-ollama.md).
+option that makes genuinely air-gapped operation possible, together with offline
+activation or a deployment license so that licensing needs no network either. See
+[Offline with Ollama](../ai/offline-ollama.md).
 
 **Custom accepts an unlisted endpoint and an unlisted model.** Both the base URL and
 the model name are left to you — LM Studio, vLLM, LocalAI and anything else
 OpenAI-shaped. See [Self-hosted models](../ai/self-hosted.md).
 
 Every card also has a **Console** link out to the provider's own key page, and a
-**Test** button that verifies the credentials before you save.
+**Test Connection** button that verifies the credentials before you save.
 
 ## See also
 

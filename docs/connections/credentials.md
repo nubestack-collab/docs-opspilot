@@ -1,22 +1,26 @@
 # Credentials
 
-SSH passwords, private keys and passphrases are encrypted using the operating
-system credential store — Keychain on macOS, Credential Manager on Windows — and
-are never written to a plain-text file. This page covers what is stored where,
-the choice between password and key authentication, and the deployment this
-product is designed for.
+SSH passwords, private keys and passphrases are encrypted with the operating
+system's own encryption — the Keychain on macOS, the Data Protection API on
+Windows, the desktop keyring on Linux — and are never written to a
+plain-text file. What follows covers what is stored where, the choice between
+password and key authentication, and the deployment this product is designed
+for.
 
-There is no account system, no cloud backend and no telemetry. Credentials live
-on the workstation that entered them, and nowhere else.
+There is no account sign-in, no sync service and no telemetry. Credentials live
+on the workstation that entered them, and nowhere else. The only connection
+OpsPilot makes on its own is for licensing, only if you activate a license
+online, and it never carries a connection credential. See
+[Activate OpsPilot](../licensing/activation.md).
 
 ## What is stored, and how
 
 A saved connection is split in two:
 
-- **The secrets** — passwords, private key contents, passphrases, and the
-  OpenStack password or application credential secret — are encrypted through the
-  OS credential store and written to an encrypted file in the application's own
-  data directory.
+- **The secrets** — passwords, private key contents, passphrases, the S3 secret
+  access key, and the OpenStack password or application credential secret — are
+  encrypted by the operating system and written to an encrypted file in the
+  application's own data directory.
 - **Everything else** — the name, type, host, port, username, environment, group
   and AI flags — is ordinary configuration and is stored as such. It is
   metadata, not credentials, and it is local to the workstation.
@@ -28,6 +32,19 @@ instead of leaving a password in a plain-text file.
 Editing a connection never re-displays a saved secret. A credential field left
 blank in the edit dialog means "leave it as it was" — retyping is only needed
 when you are actually changing it.
+
+## License activation secret
+
+Activating a license online gives this computer a secret of its own, which
+OpsPilot uses to prove its identity when it renews the license. That secret is
+encrypted in the same way as connection credentials. Your license key is sent
+once, at activation, and is not stored on the computer.
+
+If the operating system offers no real encryption — on Linux, when no unlocked
+keyring such as GNOME Keyring or KWallet is available — OpsPilot does not store
+the secret in the clear. Online activation is turned off instead, and offline
+activation with a license file works as usual. See
+[Activate OpsPilot](../licensing/activation.md).
 
 ## Password or private key
 
@@ -69,8 +86,10 @@ for them. The only reachability it needs is the reachability you already have.
 !!! note "Private or VPN-only is not air-gapped"
     With a cloud AI provider, your *workstation* still reaches the internet. That
     is private or VPN-only operation. For a genuinely air-gapped deployment the
-    model has to be local as well. See
-    [Running offline with Ollama](../ai/offline-ollama.md).
+    model has to be local as well, and the license has to need no network: an
+    offline license file or a deployment license. See
+    [Running offline with Ollama](../ai/offline-ollama.md) and
+    [Licensing for IT](../licensing/for-it.md).
 
 One platform-specific credential note: on Linux, an RDP password is handed to the
 external FreeRDP client on its command line, because that is the only
