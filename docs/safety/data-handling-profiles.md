@@ -146,8 +146,8 @@ longer exists falls through to Default rather than failing.
 
 A category that is absent from a saved profile — because the profile was saved before that
 category existed — falls back to that category's own default rather than being silently
-dropped. A profile saved by an earlier version therefore redacts NubeStack license keys
-with no change on your part.
+dropped, so a category added in a later version protects existing profiles with no change
+on your part.
 
 As with Command Safety, the profile choice in the connection dialog appears for **SSH**
 and **Local Console** connections, the two kinds of session the AI works on. Telnet, RSH,
