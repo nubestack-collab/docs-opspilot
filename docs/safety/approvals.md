@@ -138,18 +138,6 @@ Because the rules are per profile, these rows genuinely differ once you
 [assign profiles](command-safety-profiles.md) to groups. A production tab and a lab tab
 open side by side each follow their own profile, and the chip shows which.
 
-## Upgrading from an earlier version
-
-Earlier versions had one **Auto-run safe commands** switch for the whole workstation. On
-upgrade, OpsPilot gives every existing profile the rule that matches what you had:
-
-- with the switch on, **Run commands without asking me** becomes **Only read-only
-  commands** in each profile
-- with it off, or never set, it becomes **Ask me every time**
-
-Every existing profile gets **The AI's warning and my list**, and keeps its pattern list
-and its typed-reason setting. Nothing runs more freely after an upgrade than before it.
-
 ## While a command is waiting
 
 OpsPilot makes a pending approval visible outside its own window:
