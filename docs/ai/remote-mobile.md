@@ -5,6 +5,11 @@ you can list sessions, read output and propose commands against an estate with n
 internet connection of its own. This page covers the tunnel that makes that
 possible, what it is suited to, and what to weigh before enabling it.
 
+The tunnel needs an active OpsPilot free trial or subscription. Without one, **Settings
+→ AI Assistants** says so under **ChatGPT Web / Work**; your tunnel settings are kept,
+and the tunnel starts again once OpsPilot is licensed. See
+[Free trial and limits](../licensing/trial-and-limits.md).
+
 ## What the tunnel connects
 
 The workstation becomes a governed bridge into the isolated network. The servers
@@ -15,11 +20,11 @@ that workstation.
 ```text
   Phone (ChatGPT app)  ──▶  OpenAI tunnel  ──▶  OpsPilot on your desk  ──▶  VPN  ──▶  disconnected servers
                                                         │
-                                              approval still required here
+                                     approval and Command Safety rules apply here
 ```
 
 Approval still happens at the workstation, through the same execution boundary
-as every other AI path.
+and the same Command Safety profiles as every other AI path.
 
 ## Setting up the secure tunnel
 
@@ -68,9 +73,16 @@ up on any non-local address.
 alert, confirming a deployment landed, answering "is it actually down".
 
 **Deliberately does not work well from a phone:** destructive change. A
-<span class="tier tier-high">High risk</span> command needs a typed
-justification at the machine, and proposals expire after five minutes. If you are
-not there, it does not run.
+<span class="tier tier-high">High risk</span> command always needs a click at the
+machine — with a typed reason, if the profile asks for one — and proposals expire
+after five minutes. If you are not there, it does not run.
+
+What else runs while you are away is set by the Command Safety profile of each
+connection the tunnel can reach. Under **Ask me every time**, nothing runs until
+someone clicks at the workstation. Under **Only read-only commands**, read-only checks
+run by themselves, which is what makes triage from a phone practical. Under
+**Everything except dangerous ones**, a command that changes something runs too, with
+nobody watching.
 
 What is on offer is remote *triage* — finding out what is wrong, from anywhere.
 A destructive change stays a deliberate act at the workstation.
@@ -85,6 +97,10 @@ the tunnel is up. Treat it accordingly:
 - Stop the tunnel when you are not using it.
 - Keep **Allow opening/reconnecting sessions** off unless you need it — with it
   on, an assistant can open a session with no click.
+- Check the Command Safety profile of every connection the tunnel can reach. Keep
+  **Run commands without asking me** at **Ask me every time** or **Only read-only
+  commands** there, and **What counts as a dangerous command** at **The AI's warning
+  and my list**.
 - Leave **Enable AI** off entirely on your most sensitive connections. A
   connection with it off is invisible to the tunnel as it is to everything else.
 - Treat the runtime API key as a credential with real reach, and rotate it the
@@ -102,8 +118,8 @@ the tunnel is up. Treat it accordingly:
 
 - [AI Assistants (MCP)](assistants.md) — the connector, the four assistants and
   the six tools
-- [Approvals & auto-run](../safety/approvals.md) — the approval queue and the
-  five-minute expiry
+- [Approvals & auto-run](../safety/approvals.md) — the rules for what runs without
+  a click, and the five-minute expiry
 - [Security model](../safety/security-model.md) — the whole threat model in one
   place
 - [Troubleshooting](../operations/troubleshooting.md) — when the tunnel does not

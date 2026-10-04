@@ -15,10 +15,11 @@ sign-off, start with [Architecture](architecture.md).
 - **[Who it is for](who-its-for.md)** — six roles, and what each one does with
   OpsPilot day to day.
 - **[How it works](how-it-works.md)** — the eight-step loop from question to
-  executed command, the two AI modes, and where each kind of data is held.
+  executed command, the two AI modes, and where each kind of data is held,
+  license state included.
 - **[Architecture](architecture.md)** — process separation, trust boundaries,
-  data flow, and where configuration and credentials live. Written for an
-  architect or a security reviewer.
+  data flow, the optional license server, and where configuration and
+  credentials live. Written for an architect or a security reviewer.
 
 ## See also
 
@@ -26,5 +27,7 @@ sign-off, start with [Architecture](architecture.md).
   answer in about five minutes
 - [Execution boundary & risk tiers](../safety/risk-tiers.md) — the boundary the
   rest of the safety model rests on
+- [Licensing](../licensing/index.md) — the free trial, subscribing and
+  activation, including on networks where nothing may leave
 - [Glossary](../reference/glossary.md) — definitions of the terms used across
   these pages

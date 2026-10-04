@@ -68,14 +68,16 @@ to wait for.
 A self-hosted or tenancy-local model does not relax anything. Redaction still
 runs before the request leaves the workstation, using the Data Handling profile
 resolved for the connection. The reply is still a proposal, still classified by
-your Command Safety profile, and still requires a human approval event to become
-a command.
+your Command Safety profile, and runs only when you approve it or when that profile
+lets that kind of command run without a click. A dangerous command always needs your
+click.
 
 !!! note "Self-hosted is not automatically air-gapped"
     A model inside your tenancy or on your network still means the workstation
     makes a network call. That is private or VPN-only operation. Only a model on
     the workstation itself — see [Offline with Ollama](offline-ollama.md) —
-    closes the loop completely.
+    together with offline activation or a deployment license closes the loop
+    completely.
 
 ## See also
 

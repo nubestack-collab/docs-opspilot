@@ -2,8 +2,7 @@
 
 The terminal in the workbench is a full xterm-compatible terminal, so full-screen curses
 applications, colour, mouse reporting and progress output all behave the way they do in
-any other terminal. This page covers what it can do and which of its behaviours you can
-change.
+any other terminal. Here is what it can do, and which of its behaviours you can change.
 
 ## Emulation and rendering
 
@@ -16,6 +15,8 @@ The rest of the emulation follows from that:
 - The terminal grid stays sized to its panel, so resizing the window or dragging the
   terminal's resize handle re-flows the session.
 - URLs in output are clickable, and open in your default browser.
+- In an SSH session, **Ctrl+click** an IPv4 address to copy it, or an absolute path to
+  open that file in the editor.
 - Search runs over the session's scrollback, described below.
 - A session detached into its own window keeps its scrollback, and keeps it again when
   you redock it.
@@ -23,12 +24,38 @@ The rest of the emulation follows from that:
 ## The local shell
 
 A **Local** connection opens a real shell on your own machine as its own tab. On Windows
-that is `cmd.exe` or PowerShell; on macOS and Linux it is `$SHELL`, falling back to zsh
-or bash. **Settings → Terminal → Default shell** sets which one is used when a Local
-connection does not specify its own.
+that is Command Prompt or PowerShell; on macOS and Linux it is `$SHELL`, falling back to
+zsh or bash. **Settings → Terminal → Default shell** sets which one is used when a Local
+connection does not specify its own. To open one quickly, click the **+** in the terminal
+header and choose **Local Terminal**.
 
 This is an ordinary terminal tab, not a limited console — the same emulation, search,
-copy and paste and theming as a remote session.
+copy and paste and theming as a remote session. When the shell exits, the tab stays;
+press **Ctrl+R** to start a fresh one.
+
+### AI in a local shell
+
+A Local tab can use AI in the same way as an SSH tab: ask about its output in the AI panel,
+and approve or dismiss the commands it proposes. The built-in **Local** connection starts
+with AI off. To turn it on, click its **AI off** badge in the side list, or choose **AI
+Assistant → AI for This Host: toggle** while the tab is active.
+
+The model is told that it is working in a local shell on your own computer, which
+operating system and which shell it is — so it proposes PowerShell cmdlets in PowerShell
+and `cmd.exe` built-ins in Command Prompt rather than Linux commands — and that anything
+it proposes runs on your workstation, so it should prefer read-only inspection. Its
+proposals follow the same approval rules as in an SSH session, set by the connection's
+Command Safety profile, and dangerous commands always need your click. Output is redacted
+before it leaves the machine, by the Data Handling profile that applies to that Local
+connection.
+
+Because those commands run on your own computer, give the Local connection its own
+Command Safety profile if your Default profile is tuned for disposable servers: edit the
+connection and pick one under **command safety profile**. See
+[Command Safety profiles](../safety/command-safety-profiles.md).
+
+During the free trial a Local tab with AI on uses one of the two AI places, like any
+other connection; see [Free trial and limits](../licensing/trial-and-limits.md).
 
 ## Search within scrollback
 

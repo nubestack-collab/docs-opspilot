@@ -21,7 +21,31 @@ The audience is DevOps, SRE, network, platform and development engineers, with a
 specific pitch to regulated and disconnected estates (banking, defence,
 healthcare, utilities, industrial control, air-gapped networks).
 
-Current product version: **0.1.0**.
+Current product version: **0.5.1**.
+
+### Commercial and licensing facts
+
+These are settled; use them as stated, and link the URLs in prose where a reader needs
+them.
+
+| Fact | Value |
+|---|---|
+| Download page (public, no account) | `https://subscription.nubestack.com/download`. Published: the Windows x64 installer (`NubeStack-OpsPilot-Setup-0.5.1.exe`, signed with NubeStack's own certificate, so Windows says Unknown publisher) and, for Linux x64, `NubeStack-OpsPilot-0.5.1-amd64.deb` and `NubeStack-OpsPilot-0.5.1.AppImage` (not code-signed). macOS installers are not yet, so tell readers to email support to hear when they are |
+| Pricing and subscribe | `https://subscription.nubestack.com/opspilot` |
+| Customer portal | `https://subscription.nubestack.com/portal` |
+| Licensing explainer | `https://subscription.nubestack.com/licensing` |
+| Support and sales | `support@nubestack.com` |
+| Price | From $5 per user per month, or $50 per user per year; lower per-user prices from 5 seats. Never list band prices; link the pricing page. Prices are shown before tax; Paddle adds tax and shows local currency at checkout |
+| Seat | One person, up to 2 devices, one license key (`OPSP-…`) |
+| Payment | Paddle (reseller, issues tax invoices); invoices with PO and net terms on request by email |
+| Refunds | None; the free trial is the evaluation. Cancelling stops the next renewal and the license works to the end of the paid period |
+| Windows installer | Signed with NubeStack's own certificate, which Windows does not trust by default: **Unknown publisher**, and SmartScreen may warn |
+| Legal pages | The EULA and terms on the subscription site are drafts: do not link them |
+
+How licensing behaves (trial, limits, activation, IT policy) is written up in
+`docs/licensing/`; keep every other page consistent with those four pages, and source
+any change from `../opspilot/src/licensing/license-copy.js` (the exact wording) and the
+user guide's sections 5 and 18.
 
 ## The product repository
 
@@ -34,10 +58,13 @@ absent, do not invent facts to fill a gap — leave the gap and say so.
 
 1. **`../opspilot/` source code** — the highest authority. If the code and a
    document disagree, the code wins and the document is stale.
-2. **`../opspilot/NubeStack-OpsPilot-User-Guide.md`** — a 1,240-line product and
-   user guide, version 0.1.0. This site's nav was derived from its 22 chapters,
+2. **`../opspilot/NubeStack-OpsPilot-User-Guide.md`** — a 1,750-line product and
+   user guide, version 0.5.1. This site's nav was derived from its 22 chapters,
    and most pages here have a direct counterpart section in it. Start here for
-   narrative, positioning and wording.
+   narrative, positioning and wording. Its sections 5 (plans and licensing), 18
+   ("Licensing for IT") and 21.1 (release notes) are current. **Its Command Safety
+   text (sections 2.4, 8 step 5, 14.2, 14.3, 20.5) is stale**: follow
+   `src/command-safety-policy.js` and `src/settings-overlay.js` instead.
 3. **`../opspilot/docs/OpsPilot-Security-Model.md`** — the threat model, the
    redaction rationale, credential storage, audit logging.
 4. **`../opspilot/docs/OpsPilot-Provider-And-Workflow-Architecture.md`** — the
@@ -46,7 +73,7 @@ absent, do not invent facts to fill a gap — leave the gap and say so.
 5. **`../opspilot/README.md` and `../opspilot/CLAUDE.md`** — **treat with
    caution.** Both still describe the early MVP skeleton (single SSH session,
    three providers, no keychain) and are substantially out of date relative to
-   the shipped 0.1.0 product. Use them for build/packaging detail only, and
+   the shipped 0.5.1 product. Use them for build/packaging detail only, and
    verify anything else against the source.
 
 ### Where specific facts live in the source
@@ -56,7 +83,15 @@ absent, do not invent facts to fill a gap — leave the gap and say so.
 | The ten AI providers, models, auth flows, base URLs | `src/settings-overlay.js` (`AI_PROVIDERS`) |
 | The ten connection types and which form fields each shows | `src/connection-types.js` (`CONNECTION_TYPES`) |
 | Default dangerous-command patterns | `src/command-safety-defaults.js` |
-| The ten redaction categories and their defaults | `src/redaction-defaults.js` |
+| Command Safety rules per profile (auto-run scope, who decides "dangerous", typed reason) | `src/command-safety-policy.js`, the Security page in `src/settings-overlay.js` |
+| The eleven redaction categories and their defaults (six on, five off) | `src/redaction-defaults.js` |
+| Terminal control sequences stripped before redaction | `src/terminal-text.js` |
+| AI on Local Console tabs; the OS and shell the model is told | `src/ai-session-context.js` |
+| Every licensing sentence and label in the app | `src/licensing/license-copy.js` |
+| Settings → License layout | `src/settings-overlay.js` (the License section) |
+| Titlebar chip, banners, session-limit and trial AI dialogs | `src/license-ui.js` |
+| Session counting, the first 10 saved connections, the trial's AI places | `src/licensing/session-registry.js`, `src/licensing/connection-limit.js`, `src/licensing/ai-places.js` |
+| The license client (states, clock rules, policy files) | `src/license-client/` (a copy; the reference is NubeStack's licensing protocol) |
 | Redaction implementation, the single choke point | `src/redactor.js`, `ai:analyze` in `main.js` |
 | Custom-pattern validation (worker thread + timeout) | `src/redaction-validator.js`, `src/redaction-validator-worker.js` |
 | MCP tools exposed to assistants | `src/mcp-server.js` (`registerTool` calls) |
@@ -129,20 +164,22 @@ all they drive; do not quote the stale `desc` text for those two.
 `claude-sonnet-4-6`. Prefer not to quote specific Anthropic model names; point at
 the app's own model picker.
 
-**Do not tell readers to read their version off the interface.** The released
-version is **0.1.0** (`package.json`). Where a page needs a reader to report their
-version, tell them to take it from the download or installer they ran.
+**Readers can read their version in the app.** **Settings → About** shows
+`v<version>` (from the running app, never hard-coded), currently **v0.5.1**. Tell
+readers to quote it when they contact support.
 
-**Application data paths are not printable.** Every store uses
-`app.getPath('userData')` with no literal path. `src/mcp-stdio-bridge.js` has a
-per-platform mapping using the internal app name `opspilot-mvp`, but that is the
-dev `package.json` `name` and is not confirmed for packaged 0.1.0 builds. Do not
-print a path; describe how to find the folder (the one holding `connections.json`
-and `settings.json` side by side) instead. The store filenames themselves *are*
-verified: `connections.json`, `groups.json`, `environments.json`,
-`command-safety-profiles.json`, `redaction-profiles.json`, `settings.json`,
-`transfer-history.json`, `credentials.enc.json`, and
-`openai-tunnel/runtime-key.enc`.
+**Application data paths.** Every store uses `app.getPath('userData')`, and the
+app's internal name `opspilot-mvp` fixes that folder in packaged builds too (the
+licensing design forbids renaming it, because the license state would be left
+behind): `%APPDATA%\opspilot-mvp` on Windows (roaming profile),
+`~/Library/Application Support/opspilot-mvp` on macOS, `~/.config/opspilot-mvp` on
+Linux. The licensing pages print these paths because IT needs them; elsewhere,
+describing the folder (the one holding `connections.json` and `settings.json` side
+by side) is usually enough. The store filenames are verified: `connections.json`,
+`groups.json`, `environments.json`, `command-safety-profiles.json`,
+`redaction-profiles.json`, `settings.json`, `transfer-history.json`,
+`credentials.enc.json`, `openai-tunnel/runtime-key.enc`, and the `licensing/` folder
+(`license-state.json`, `markers.json`, and `device-id` with roaming identity).
 
 **Verified numbers and behaviours worth reusing.** Proposal timeout is
 `PROPOSAL_TIMEOUT_MS = 5 * 60 * 1000`; `open_session` has a separate
@@ -176,13 +213,19 @@ self-hosted model.
 clears `aiProviders` and `activeProvider`. Document that verified scope rather
 than the broader wording on the button's confirmation prompt.
 
-**Auto-run is application-wide, not per environment.** It is stored as
-`aiFeatures.autoRunSafeCommands` — a single workstation switch. The guide's
-"scope it per environment" is misleading; per-environment *policy* is achieved
-through profiles, and auto-run is not part of a profile. Relatedly, the
-pending-approval taskbar/dock badge **does not exist on Linux** (Electron
-exposes neither API), and foreground-raising happens when the user clicks the
-notification rather than automatically.
+**Command Safety is per profile, including auto-run.** Each Command Safety profile
+has three controls: **Run commands without asking me** (**Ask me every time**, the
+default; **Only read-only commands**; **Everything except dangerous ones**), **What
+counts as a dangerous command** (**The AI's warning and my list**, the default; **Only
+my list**, under which the AI's warning shows as an amber note that was not applied),
+and **Make me type a reason for dangerous commands** (on by default). Dangerous
+commands always need a click. The old workstation-wide `aiFeatures.autoRunSafeCommands`
+switch is gone: on upgrade, if it was on, each profile gets **Only read-only
+commands**. The composer chip reads **Auto-run off**, **Auto-run read-only** or
+**Auto-run all** for the active session. Relatedly, the pending-approval taskbar/dock
+badge **does not exist on Linux** (Electron exposes neither API), and
+foreground-raising happens when the user clicks the notification rather than
+automatically.
 
 **The destructive-command gate is a typed free-text justification of at least
 ten characters** (`DANGEROUS_REASON_MIN_LEN = 10` in `renderer.js`), not a fixed
@@ -193,9 +236,9 @@ precisions the guide's §20.5 table gets wrong:
 
 - It is **one `confirm & run` button** that enables once the justification
   crosses ten characters — not a typed reason followed by a separate click.
-- The typed reason is **conditional** on the resolved profile's *Require a
-  written reason for dangerous commands* setting. With that off, a High risk
-  command needs an explicit click and no reason. **The click can never be
+- The typed reason is **conditional** on the resolved profile's **Make me type a
+  reason for dangerous commands** setting (on by default). With that off, a High
+  risk command needs an explicit click and no reason. **The click can never be
   turned off; the reason can.**
 
 **`propose_command`'s schema is bigger than the guide says.** Guide §20.1 lists
@@ -210,11 +253,11 @@ because there is no human to wait for, only the connect handshake.
 meant to serve a firewall reviewer.
 
 **`isExternal` and `isFileBrowser` do not route the surface — they gate the AI
-toggle.** Their only consumers in `renderer.js` (lines ~674 and ~9508) decide
-whether **Enable AI** is offered. Do not document them as "how the connection
-opens". Note also a stale comment at ~9511 claiming "telnet/rsh DO show that
-toggle" while the condition above it hides the AI row for both: **Enable AI is
-available for SSH and serial only.**
+toggle.** Their consumers in `renderer.js` decide whether **Enable AI** is offered.
+Do not document them as "how the connection opens". **The dialog offers Enable AI
+for SSH, serial and Local; AI actually works on SSH and Local Console tabs**, and
+the model is told the operating system and shell. Serial connections never have AI
+and show no AI badge in the side list; Telnet and RSH show no AI toggle.
 
 **`src/menubar.js`'s `shortcut:` strings are display labels, not bindings.** The
 file registers no accelerators, and nothing in the repo calls
@@ -237,17 +280,18 @@ real exposure: **on Linux an RDP password is passed to `xfreerdp` on the command
 line**, so it is visible to anything that can list the user's processes. Document
 that plainly; do not hide it.
 
-**No SSH host key verification ships in 0.1.0.** A grep for
+**No SSH host key verification ships (still true in 0.5.1).** A grep for
 `hostkey|fingerprint|known_hosts|hostVerifier` across `src/` and the root JS
 finds nothing on the SSH path. The security model document's §8 bullet is intent.
 Say so, and tell readers not to plan a control around it.
 
 **Other real limits found in source.** `Force fresh session before connecting` is
 Windows-only and destroys unsaved work in the session it logs off. Per-connection
-Command Safety and Data Handling profile assignment is **SSH-only**, and the AI
-badge is not rendered for external launchers, file browsers, Telnet or RSH —
-`ai:analyze` resolves sessions through `sshManager.getSession` specifically, so
-Telnet and RSH can never use AI even if the flag was saved as on. `src/themes/`
+Command Safety and Data Handling profile assignment is offered for **SSH and Local**
+connections, and the AI badge is rendered only for SSH and Local — not for external
+launchers, file browsers, serial, Telnet or RSH. AI sessions resolve through the SSH
+and local-shell registries only, so Telnet and RSH can never use AI even if the flag
+was saved as on. `src/themes/`
 contains exactly one theme and `ThemeManager` exposes no selector, so adding a
 theme is a source-level change. `src/term-search.js` tooltips advertise
 `Alt+C`/`Alt+W`/`Alt+R` but **none of those bindings is implemented** — they are
@@ -290,8 +334,10 @@ makes the Stop button and `ai:cancel` possible.
 
 **Redaction category labels: use the code's, not the guide's.** The code says
 "Private key blocks", "Bearer tokens", "JWTs", "Password/secret assignments",
-"UUIDs"; the guide writes "PEM private key blocks", "HTTP bearer tokens", "JSON
-Web Tokens", "UUIDs and GUIDs". The five-on / five-off split does match.
+"UUIDs"; older guide text writes "PEM private key blocks", "HTTP bearer tokens",
+"JSON Web Tokens", "UUIDs and GUIDs". There are eleven categories, six on and five
+off: the eleventh, **NubeStack license keys** (on by default), matches `OPSP-` keys,
+also without dashes or with spaces.
 
 **Both `../opspilot/docs/*.md` design documents are pre-implementation and
 partly wrong about the shipped product.** The provider architecture document
@@ -311,9 +357,9 @@ guide does not mention them:
 
 - `package.json` has **no `engines` field**, so there is no authoritative Node
   version for building from source. Say "a current LTS release", not a number.
-- macOS builds are configured with `hardenedRuntime: false` and
-  `gatekeeperAssess: false`, so **they are not notarised as configured**. Do not
-  imply otherwise.
+- macOS builds are configured with `hardenedRuntime: true` and entitlements, but no
+  Developer ID signing or notarisation is in place yet, and no macOS installer is
+  published. Do not imply that macOS builds are notarised.
 
 ## Product invariants — never contradict these in a page
 
@@ -327,14 +373,20 @@ anything that implies otherwise is a correctness bug in the documentation.
 2. **Redaction happens before egress, on one code path.** Terminal output
    reaches no AI provider without passing through the local redactor first.
    There is exactly one path from the terminal buffer to AI context.
-3. **The dangerous list can only get stricter.** A pattern match can promote a
-   command to High risk; nothing can demote a command the model already flagged.
-   State the asymmetry whenever risk classification comes up.
+3. **Under the default rule, the dangerous list can only get stricter.** With
+   **What counts as a dangerous command** set to **The AI's warning and my list**
+   (the default), a pattern match can promote a command to High risk and nothing
+   can demote a command the model already flagged. With **Only my list**, the
+   user's list is the only judge and the AI's warning is shown but not applied.
+   State whichever rule applies whenever risk classification comes up, and never
+   claim "nothing can demote" without the condition.
 4. **Dangerous patterns are plain, case-insensitive substrings, not regexes.**
    This is deliberate. Custom *redaction* patterns, by contrast, are real
    regexes — and those are validated in a worker thread with a timeout.
-5. **Auto-run ships off.** Read-only auto-run is genuinely useful and genuinely
-   optional. Never present it as a default.
+5. **Auto-run ships off, per profile.** On a new installation every Command Safety
+   profile starts at **Ask me every time**. Auto-run is set per profile (read-only,
+   or everything except dangerous commands), never workstation-wide, and dangerous
+   commands always need a click. Never present auto-run as a default.
 6. **AI access is per connection, and a connection with AI off is invisible to
    every model and every assistant.** That off-state semantics is the invariant
    and the code upholds it. **Do not claim it defaults to off** — see the note on
@@ -343,16 +395,29 @@ anything that implies otherwise is a correctness bug in the documentation.
    additions.** A group profile can legitimately be *less* strict than Default.
 8. **The MCP connector binds to `127.0.0.1` only.** No public listener is ever
    opened, including in the ChatGPT tunnel case.
-9. **No telemetry, no account system, no cloud backend.** Settings, connections
-   and profiles are local to the workstation. Terminal scrollback is memory-only:
+9. **No telemetry, no sign-in in the app, and one optional backend.** Settings,
+   connections and profiles are local to the workstation. The only service
+   OpsPilot contacts on its own is the license server, and only after an online
+   activation: a check every 5 minutes while the computer is in use (not recorded)
+   and a renewal about once a day, never terminal content, host names or user
+   names. The trial, offline activation and deployment licenses make no network
+   connection, and IT can forbid licensing traffic with `policy.json`. Buying
+   creates an account on the NubeStack subscription site, not in the app. Terminal
+   scrollback is memory-only:
    OpsPilot never writes it to disk of its own accord. The only exceptions are
    explicit, user-initiated exports — **Save terminal output** and **Print
    terminal output** in the tab context menu. State it that way rather than as an
    absolute, and keep `safety/` and `workspace/` consistent on it.
-10. **"Air-gapped" requires a local model.** With a cloud provider the
-    *workstation* still reaches the internet — that is **private / VPN-only**
-    operation. Keep the two terms distinct; the product is careful about this and
-    so is this documentation.
+10. **"Air-gapped" requires a local model and a license that needs no network.**
+    With a cloud provider the *workstation* still reaches the internet — that is
+    **private / VPN-only** operation. A fully air-gapped installation also needs
+    offline activation or a deployment license. Keep the terms distinct; the
+    product is careful about this and so is this documentation.
+11. **Licensing never blocks the terminal and never closes a session.** It limits
+    only AI, the number of sessions open at once and, in the trial and without a
+    subscription, which saved connections open. An AI answer already under way
+    when a license is lost finishes. If licensing cannot start, the app runs with
+    no session limit and AI off. A paying customer is never told to subscribe.
 
 ## Honesty rules
 
@@ -383,43 +448,37 @@ one either omits it or routes the reader to the NubeStack channel. Do not fill
 any of these in from assumption. If you get an authoritative answer from
 NubeStack, document it and delete the line here.
 
+Buying, annual and volume pricing, cancellation and refunds, the seat as a license
+unit, activation and the trial start are now answered: see "Commercial and
+licensing facts" above and `docs/licensing/`.
+
 **Commercial**
 
-- How to actually buy. There is no purchase URL, checkout or billing portal in
-  any source.
-- Currency and tax. `$5` is stated with no currency qualifier; nothing on VAT or
-  sales tax. Do not assert USD.
-- Annual pricing, volume or team discounts, enterprise plans.
-- Cancellation, refunds, and what happens mid-cycle. The guide describes what
-  happens after the *trial* ends, but not what happens if an active
-  subscription lapses.
-- What "per user, per month" means as a licence unit — named versus concurrent
-  user, or multiple workstations per user.
-- **Licence key and activation mechanics.** Nothing describes how a subscription
-  is applied to an installation, whether there is an activation step, or whether
-  it requires network access. Given the air-gapped pitch, this is the largest
-  practical gap in the documentation.
-- What event starts the 15-day trial — install, first run, or first AI use.
+- Currency. Prices are written with `$` only; Paddle shows the buyer's local
+  currency and adds tax at checkout. Do not assert USD or a VAT treatment.
+- Band prices exist but staff can change them: never list them, link the pricing
+  page.
 
 **Legal and compliance**
 
-- The EULA, commercial licence terms and third-party notices are "supplied with
-  your subscription", so a legal or security reviewer cannot read them from this
-  site. Do not paraphrase terms you have not seen.
-- No security contact, PGP key, disclosure timeline or bounty for vulnerability
-  reporting beyond "your support channel".
+- The EULA, commercial license terms and deployment license terms exist on the
+  subscription site only as drafts, so do not link or paraphrase them. Route
+  reviewers who need a copy to support@nubestack.com.
+- No PGP key, disclosure timeline or bounty for vulnerability reporting; reports go
+  to support@nubestack.com.
 - No data processing agreement, sub-processor list or GDPR-style documentation,
   despite the regulated-estate positioning.
 
 **Support and releases**
 
 - No support hours, response targets, severity definitions or tiers.
-- No release date for 0.1.0, no release cadence, no per-version support window.
+- No release dates, no release cadence, no per-version support window. No release
+  has been tagged publicly; do not print release dates.
 
 **Product**
 
 - Whether the local encrypted audit log ever ships. The security-model document
-  treats it as MVP scope; nothing in the source confirms it in 0.1.0, so
+  treats it as MVP scope; nothing in the source confirms it up to 0.5.1, so
   `about/release-notes.md` records under known limitations that this release
   writes no durable audit log, and `safety/security-model.md` tells readers to
   capture an execution record from their own session-recording arrangements.
@@ -451,19 +510,43 @@ requirements.txt              pinned mkdocs + material + pymdown-extensions
 docs/
   index.md                    site landing page
   overview/ getting-started/ connections/ workspace/ ai/
-  safety/ operations/ reference/ about/
-  assets/images/              product screenshots, numbered 00-13
+  safety/ licensing/ operations/ reference/ about/
+  assets/images/              screenshots: 11-13 from the product repo, 14 onwards for 0.5.1
   stylesheets/extra.css       risk-tier badges, screenshot and caption styling
+overrides/                    theme override that adds the Download and Subscribe buttons
 .github/workflows/docs.yml    strict build + Pages deploy
 CONTRIBUTING.md               writing style, page conventions, review checklist
 ```
 
-Screenshots are copied from `../opspilot/docs/images/` and keep their numbering,
-which skips `06`. Do not renumber them; the numbers are how the product repo
-refers to them too.
+Screenshots `11` to `13` are copied from `../opspilot/docs/images/` and keep their
+numbering. `00` to `10` showed 0.1.0 and were removed in the 0.5.1 refresh; their numbers
+are not reused. Screenshots from `14` onwards show 0.5.1, taken from an isolated copy of
+OpsPilot with demo connections only and from a local portal with demo data (see the
+table in `CONTRIBUTING.md`). Never publish a screenshot that shows real connections,
+hosts, keys or device codes. New screenshots continue from the next free number. Where a page needs a
+screenshot that does not exist yet, leave an HTML comment on its own line,
+`<!-- screenshot: what the image should show -->`, rather than referencing a file.
+
+## Calls to action
+
+Every page gets **Download** and **Subscribe** buttons from the theme override in
+`overrides/`, linking to the download page and the pricing page. Do not add your own
+call-to-action blocks to a page; link the URLs in prose where a reader needs them. A
+page that should not show the buttons sets `hide_cta: true` in its front matter:
+
+```markdown
+---
+hide_cta: true
+---
+
+# Page title
+```
 
 ## Style
 
-Prose, not marketing. British spelling. Sentence case for headings. See
+Prose, not marketing. British spelling, except **"license" for both noun and verb**,
+as the product and the subscription site write it ("Settings → License", "Import
+license file"); never "licence". "Organisation", not "organization". Sentence case
+for headings. See
 `CONTRIBUTING.md` for the full set of conventions, including the risk-tier badge
 markup, image and caption conventions, and admonition usage.
