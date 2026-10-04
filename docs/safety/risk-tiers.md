@@ -7,89 +7,105 @@ everything else in this section refines what is here.
 ## The execution boundary
 
 The AI model has no execution capability inside OpsPilot. It has one output channel: a
-*proposal*. Turning a proposal into a real command requires an explicit approval event
-raised by your click. OpsPilot's own code is what runs anything against a session.
+*proposal*. OpsPilot's own code is what types a command into a session, and it does so
+only when you approve the proposal, or when the proposal falls in a class you
+pre-authorised in the session's [Command Safety profile](command-safety-profiles.md).
+Either way the command takes the same path; the model never reaches a shell.
 
 There is no configuration, provider, assistant or prompt that changes this. It is not a
 toggle, and the product does not present it as one: **Settings → Security → Command
-Safety** lists **AI direct execution** with the badge **Always enforced** rather than a
-switch. A model that decides to run `rm -rf /` produces a card on your screen, not an
-outage.
-
-What varies between the tiers is which decision you have to make, never whether one is
-required.
+Safety** lists **How OpsPilot runs a command** with the badge **Always enforced** rather
+than a switch. With the shipped patterns, a model that decides to run `rm -rf /`
+produces a card on your screen, not an outage: the command matches a dangerous pattern,
+and a dangerous command always waits for your click.
 
 !!! note "This applies to assistants too"
     A proposal that arrives from Claude Desktop, VS Code or ChatGPT over the MCP
     connector goes through the same approval gate, in the same window, with the same
-    tiers. There is no separate, looser path for an external assistant. See
-    [AI Assistants](../ai/assistants.md).
+    tiers and the same profile rules. There is no separate, looser path for an external
+    assistant. See [AI Assistants](../ai/assistants.md).
 
 ## The three tiers
 
-Every proposed command lands in exactly one tier, and the tier determines what it takes
-to run.
+Every proposed command lands in exactly one tier, shown as a badge on its card.
 
 | Tier | Where the tier comes from | What it takes to run |
 |---|---|---|
-| <span class="tier tier-readonly">Read-only</span> | The model marked the command safe | One click — or none, if you switched auto-run on |
-| <span class="tier tier-low">Low risk</span> | Neither flag set | One explicit click, always |
-| <span class="tier tier-high">High risk</span> | The model marked it dangerous **or** it matched one of your dangerous patterns | A typed written justification, then the click |
+| <span class="tier tier-readonly">Read-only</span> | The model marked the command read-only, and nothing made it dangerous | A click — or none, if the profile runs **Only read-only commands** or **Everything except dangerous ones** |
+| <span class="tier tier-low">Low risk</span> | Neither read-only nor dangerous | A click — or none, if the profile runs **Everything except dangerous ones** |
+| <span class="tier tier-high">High risk</span> | It counts as dangerous under the profile: the model's warning or one of your patterns | Always a click, plus a typed reason if the profile asks for one |
 
 <span class="tier tier-readonly">Read-only</span> means viewing: reading logs, describing
-or listing resources, checking status. Nothing that changes or deletes ever carries this
-tag — and if a model tags something that does, your pattern list is what catches it.
+or listing resources, checking status. A command that matches one of your dangerous
+patterns is never read-only, even if the model tagged it so.
 
-A <span class="tier tier-high">High risk</span> command needs a real typed reason by
-default. That requirement is per profile and can be turned off, in which case the command
-still needs an explicit click; the click itself can never be turned off. See
+A <span class="tier tier-high">High risk</span> command needs a typed reason by default.
+That requirement is per profile and can be turned off, in which case the command still
+needs an explicit click; the click itself can never be turned off. See
 [Approvals & auto-run](approvals.md).
 
-## The asymmetry
+## What makes a command dangerous
 
 Classification comes from two independent sources:
 
 1. **The model's own self-assessment.** The model is asked to classify each command it
    proposes as safe, dangerous, or neither.
-2. **Your dangerous-pattern list**, resolved from the Command Safety profile that applies
-   to the session — plain-text, case-insensitive substrings.
+2. **Your dangerous-pattern list**, from the Command Safety profile that applies to the
+   session — plain-text, case-insensitive substrings.
 
-They are combined with a deliberate asymmetry: **a pattern match can promote a command to
-<span class="tier tier-high">High risk</span>, but nothing can demote a command the model
-already flagged.** Classification moves in one direction only.
+How they combine is the profile's **What counts as a dangerous command** rule.
+
+**The AI's warning and my list** (the default) uses either one: a command is
+<span class="tier tier-high">High risk</span> if the model flagged it **or** it matched a
+pattern. Under this rule classification moves in one direction only — a pattern match can
+promote a command to High risk, and nothing demotes a command the model already flagged.
 
 - **A model that misjudges a destructive command is still caught by your list.** This
-  also covers the case where the terminal output itself is hostile — output containing
-  injected instructions cannot talk a command down into the auto-run tier, because the
-  pattern list is applied afterwards and independently.
+  also covers the case where the terminal output itself is hostile: output containing
+  injected instructions cannot talk a listed command down into a tier that runs by
+  itself, because the pattern list is applied afterwards and independently.
 - **A model that is over-cautious is never silently overridden.** If the model says
-  dangerous and your list says nothing, the command is still
-  <span class="tier tier-high">High risk</span>. You can approve it; you cannot configure
-  the flag away.
+  dangerous and your list says nothing, the command is still High risk. You can approve
+  it; you cannot configure the flag away under this rule.
 
-When a command reaches the justification gate, OpsPilot says which of the two sources
-flagged it — either "Flagged dangerous by the AI", or the specific pattern it matched and
-the profile that pattern came from.
+**Only my list** makes your list the only judge. A command the model flagged but your list
+does not match becomes <span class="tier tier-low">Low risk</span>, and its card carries
+an amber note saying the AI flagged it as destructive and the warning was not applied.
+Choose it only for a profile whose list you trust completely. See
+[Command Safety profiles](command-safety-profiles.md).
 
-## One investigation, three tiers
+When a command reaches the typed-reason box, OpsPilot says which source flagged it:
+**Flagged dangerous by the AI.**, or the specific pattern it matched.
 
-![Three proposed commands in the AI panel, showing the read-only, low risk and high risk tiers with their different approval controls](../assets/images/08-approvals.png)
+## The tiers in the AI panel
 
-*One investigation producing all three tiers. The read-only status check ran on its own
-and carries a 🔒 2 badge — two secrets were scrubbed from its output before the AI saw
-it. The config test waits for a click. The restart-and-delete command matched the
-`rm -rf` pattern, so it is High risk and needs a written reason before it can run.*
+An investigation into nginx failing to start on web-01, under a profile that asks every
+time:
 
-The panel, read top to bottom:
+1. The model first proposed `nginx -t`, which only tests the configuration. It was tagged
+   read-only and matched no pattern, so it was
+   <span class="tier tier-readonly">Read-only</span>. It ran after a click; under **Only
+   read-only commands** it would have run by itself. Once finished, it folds to a single
+   line.
+2. The test named a misspelt directive, and the model proposed a `sed` command to correct
+   the file. That changes something but is not dangerous, so it is
+   <span class="tier tier-low">Low risk</span> and waits for a click (unless the profile
+   runs **Everything except dangerous ones**).
 
-1. The status check was tagged safe by the model, matched no pattern, and — because
-   auto-run was on for this workstation — ran with no click. Its output was redacted
-   before it went back into the AI's context, which is what the 🔒 badge counts.
-2. The configuration test changes nothing but was not tagged safe, so it sits at
-   <span class="tier tier-low">Low risk</span> and waits. One click runs it.
-3. The restart-and-delete command matched a dangerous pattern. That promoted it to
-   <span class="tier tier-high">High risk</span> regardless of what the model thought, and
-   the panel shows the matched pattern along with the reason box.
+    ![The finished Read-only step folded to one line, and a Low risk proposal to correct the nginx configuration with approve & run and dismiss](../assets/images/18-ai-low-risk-proposal.png)
+    _The Read-only test has run and folded to one line. The correction changes a file, so
+    it is **Low risk** and waits for **approve & run**._
+
+3. Asked to clear the cache and reload nginx, the model proposed a command containing
+   `rm -rf`. That matched a dangerous pattern, which made it
+   <span class="tier tier-high">High risk</span> whatever the model thought. It waits
+   under every setting, and with the typed reason on it names the matched pattern and
+   asks for a reason.
+
+    ![A High risk proposal to clear the nginx cache and reload, with the matched rm -rf pattern named, a typed reason and the confirm & run button](../assets/images/20-ai-high-risk.png)
+    _The card says why it is **High risk**: the command matches `rm -rf` from the Default
+    profile's list. **confirm & run** stays disabled until the reason is at least ten
+    characters long._
 
 ## What the tiers do not cover
 
@@ -97,14 +113,17 @@ The panel, read top to bottom:
 - They do not expire on their own in the AI panel — but a proposal that arrives from a
   connected assistant does, after five minutes. See [Approvals & auto-run](approvals.md).
 - They do not make a connection visible to the AI. AI access is scoped per connection by
-  the **Enable AI** toggle in the connection dialog: a connection with it off is invisible
-  to every model and every assistant, regardless of tier behaviour. Set it deliberately
-  and check it before you connect rather than assuming a default in either direction.
+  the **Enable AI** toggle in the connection dialog, and by your license: a connection
+  with AI off is invisible to every model and every assistant, regardless of tier
+  behaviour. Set the toggle deliberately and check it before you connect rather than
+  assuming a default in either direction.
 
 ## See also
 
-- [Approvals & auto-run](approvals.md) — the settings, the defaults and the waiting state
-- [Command Safety profiles](command-safety-profiles.md) — where your pattern list lives
+- [Approvals & auto-run](approvals.md) — the three rules, the defaults and the waiting
+  state
+- [Command Safety profiles](command-safety-profiles.md) — where your pattern list and
+  rules live
 - [Default dangerous patterns](../reference/dangerous-patterns.md) — the 21 shipped
   patterns
 - [Security model](security-model.md) — the data flow this sits inside

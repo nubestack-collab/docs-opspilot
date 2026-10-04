@@ -15,15 +15,19 @@ the end is what keeps both true six months later.
       Those sessions have no AI path, so a profile assigned to them does nothing.
 - [ ] Assign a strict Data Handling profile to production groups.
 - [ ] Assign a strict Command Safety profile to production groups, with a full pattern
-      list.
-- [ ] Leave auto-run off in production.
-- [ ] Keep dangerous-command confirmation on everywhere.
+      list and **What counts as a dangerous command** set to **The AI's warning and my
+      list**.
+- [ ] Set **Run commands without asking me** to **Ask me every time** in the profiles that
+      govern production.
+- [ ] Keep **Make me type a reason for dangerous commands** on everywhere.
 - [ ] Leave assistant session-opening off unless it is required — **Let AI Assistant open
       this session** is per connection and off by default, and the master switch in
       **Settings → AI Assistants** gates it as well.
 - [ ] Stop the ChatGPT tunnel when it is not in use.
 - [ ] Use a local model where the data classification requires it. A cloud provider means
       the workstation still reaches the internet.
+- [ ] Where nothing may leave, use offline activation or a deployment license, and set
+      `"networkActivation": "disabled"` in `policy.json`.
 - [ ] Verify installer hashes before deployment.
 - [ ] Restrict who can edit profiles on shared workstations.
 
@@ -32,9 +36,17 @@ Supporting facts for whoever signs this off:
 - **Credential storage is fail-closed.** Credentials are encrypted through the OS
   credential store, and a workstation that cannot encrypt refuses to save the credential
   rather than writing plaintext. That includes an S3 secret access key, which occupies the
-  same encrypted slot as an SSH password.
+  same encrypted slot as an SSH password, and the secret behind an online license
+  activation.
 - **A connection with AI off is invisible to every model and every assistant**, which
   makes the second item on the list the cheapest control on this page.
+- **A dangerous command always needs a click at the workstation**, whatever a profile
+  says. The rules decide what else may run without one, so read a profile's **What this
+  means right now** summary before assigning it to production.
+- **Licensing can be made silent.** The free trial, offline activation and deployment
+  licenses make no network connection, and `"networkActivation": "disabled"` stops any
+  user activating online. A `policy.json` that cannot be read turns online activation off
+  too. See [Licensing for IT](../licensing/for-it.md).
 - **Run OpsPilot over a VPN or a trusted management network.** On the SSH path the
   network position is what protects the connection. On Linux, an RDP password is passed to
   the FreeRDP client on its command line and is therefore readable by anything that can
@@ -54,34 +66,38 @@ next widens the exposure.
    the new-connection dialog does not open in the off state, so an imported or
    recently-created connection may well have it on.
 2. **Configure a production Data Handling profile** that also scrubs hostnames and IP
-   addresses, on top of the five credential categories that are on by default. Expect
+   addresses, on top of the six credential categories that are on by default. Expect
    answers to get vaguer; decide whether that trade is acceptable before, not after.
-3. **Configure a production Command Safety profile** with your full pattern list and
-   dangerous-command confirmation on. Remember that a profile replaces Default rather
-   than extending it, so the production profile must be complete in itself.
-4. **Enable AI on a handful of read-heavy production connections**, with auto-run off.
+3. **Configure a production Command Safety profile** with your full pattern list, **Ask
+   me every time**, **The AI's warning and my list**, and the typed reason on. A profile
+   replaces Default rather than extending it, so the production profile must be complete
+   in itself.
+4. **Enable AI on a handful of read-heavy production connections**, under that profile.
    Read-heavy means the sessions where the work is inspection: log hosts, monitoring
    boxes, read replicas.
 5. **Run for two weeks and read every proposal.** Not a sample — every one. You are
    calibrating two things at once: whether the model's risk self-assessment matches your
-   estate, and whether your pattern list catches what it misses.
+   estate, and whether your pattern list catches what it misses. Only then consider
+   **Only read-only commands** for staging.
 6. **Widen from there**, one group at a time, with the same two-week discipline on any
    environment class you have not seen before.
 
 !!! warning "Do not start step 4 with a write-heavy connection"
     The first connections you enable are the ones whose proposals you will read most
     carefully, which is exactly why they should be the ones where a mistake costs least.
-    A database primary is a bad first choice even with auto-run off.
+    A database primary is a bad first choice even under **Ask me every time**.
 
 ## What to review, and when
 
 | Review | When | What you are looking for |
 |---|---|---|
-| Profile assignments per group and per connection | At rollout, then whenever a connection moves group | A permissive profile that has landed on a production group — because profiles replace rather than extend, this silently drops every Default pattern |
-| The dangerous-pattern list | With the security team, and after any new tooling lands | Estate-specific destructive verbs no default could guess |
+| Profile assignments per group and per connection | At rollout, then whenever a connection moves group | A permissive profile that has landed on a production group — because profiles replace rather than extend, this silently drops every Default pattern and rule |
+| Each Command Safety profile's three rules | Whenever a profile is created or edited | **Everything except dangerous ones** or **Only my list** on a profile that reaches production; the one-line summary in **Manage profiles…** shows both at a glance |
+| The dangerous-pattern list | With the security team, and after any new tooling lands | Estate-specific destructive verbs no default could guess — the only check left in a profile set to **Only my list** |
 | Which connections have **Enable AI** on | Periodically, and after any connection import | Scope creep — connections that were enabled for one investigation and never turned back off |
 | Which connections allow assistant session-opening | Same review | The stricter permission, which should be a much shorter list |
 | Custom redaction patterns | When a new data class appears in output | Patterns that no longer match a changed identifier format, and new classes with no pattern at all |
+| `policy.json` and the managed `licenses` folder | After any change by IT | `networkActivation` set as intended, and any `licenseServer` the address you expect (**Settings → License** names it) |
 | Idle lock and lock-on-minimise settings | After any settings reset or reinstall | Settings are per workstation, so a rebuilt machine starts from defaults |
 
 These reviews are the standing record of policy on the workstation, so put them on a
@@ -93,7 +109,8 @@ Both profile types should be owned by the platform team, not by the individual e
 using the connection:
 
 - A profile is policy for everyone assigned to a group, so editing one on a whim changes
-  the rules for colleagues who were not part of the decision.
+  the rules for colleagues who were not part of the decision — including what runs
+  without a click.
 - The judgment involved — which commands are destructive in *this* estate, which data
   classes must never reach a provider — is estate knowledge, not session knowledge.
 
@@ -105,8 +122,8 @@ alone. On shared workstations, restrict who can edit them at all.
 ## See also
 
 - [Security model](security-model.md) — the reasoning behind each item
-- [Command Safety profiles](command-safety-profiles.md) — building the production pattern
-  list
+- [Approvals & auto-run](approvals.md) — the three rules a production profile sets
 - [Data Handling profiles](data-handling-profiles.md) — building the production redaction
   profile
-- [Administration and rollout](../operations/administration.md) — the phased plan by week
+- [Licensing for IT](../licensing/for-it.md) — offline activation, deployment licenses
+  and `policy.json`

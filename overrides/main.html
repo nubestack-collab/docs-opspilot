@@ -1,0 +1,27 @@
+{#-
+  Theme override: every page gets Download and Subscribe calls to action.
+  - The announcement bar at the top of every page.
+  - A box under the page content, unless the page sets `hide_cta: true` in its front matter.
+  Links and wording live in partials/opspilot-cta.html and below; prices are only ever given as "from",
+  because staff can change them on the subscription site.
+-#}
+{% extends "base.html" %}
+
+{% block announce %}
+<div class="opspilot-announce">
+  <span class="opspilot-announce__text">
+    <strong>OpsPilot 0.5.1</strong> &middot; free 15-day trial, no account or card needed
+  </span>
+  <span class="opspilot-announce__actions">
+    <a class="opspilot-announce__link opspilot-announce__link--primary" href="https://subscription.nubestack.com/download">Download</a>
+    <a class="opspilot-announce__link" href="https://subscription.nubestack.com/opspilot">Subscribe</a>
+  </span>
+</div>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+  {% if not (page and page.meta and page.meta.hide_cta) %}
+    {% include "partials/opspilot-cta.html" %}
+  {% endif %}
+{% endblock %}

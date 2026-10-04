@@ -23,6 +23,12 @@ There is no SFTP connection type. SFTP is reached through the file explorer of a
 SSH session, not as a connection of its own. FTP and AWS S3 are the two
 file-transfer connection types.
 
+A program OpsPilot starts in its own window — Mosh, a viewer for a direct VNC host,
+RDP on macOS and Linux — gets an entry in the tab bar with a **Close** button while
+it runs. During the free trial and without a subscription it counts toward the 10
+sessions open at once, like any tab. See [Free trial and
+limits](../licensing/trial-and-limits.md).
+
 For what each surface looks like in use, see
 [Remote desktop](../connections/remote-desktop.md),
 [Hypervisor consoles](../connections/hypervisor-consoles.md) and
@@ -66,9 +72,9 @@ port / username login.
 | **connection name** | Text, required | The label used in the sidebar and tabs |
 | **environment** | Select | Colour-coded tag. Hidden for AWS S3, Serial and Local |
 | **group** | Select | Defaults to **— no group —**. Carries policy |
-| **command safety profile** | Select | **— inherit from group —** by default. SSH only |
-| **data handling profile** | Select | **— inherit from group —** by default. SSH only |
-| **Enable AI** | Toggle | Sub-caption "AI panel for this host". Shown for SSH and Serial |
+| **command safety profile** | Select | **— inherit from group —** by default. SSH and Local |
+| **data handling profile** | Select | **— inherit from group —** by default. SSH and Local |
+| **Enable AI** | Toggle | Sub-caption "AI panel for this host". Shown for SSH, Serial and Local |
 | **Save connection** | Toggle | Captioned "Credentials encrypted, never plaintext" |
 | **Let AI Assistant open this session** | Toggle | Off by default. Also needs the master switch |
 
@@ -76,15 +82,19 @@ Only two environments seed on first run, `production` and `staging`, and those a
 the two options the dialog offers. Add your own on **Settings → Environments**.
 
 The dialog has no **Save** button. **Save connection** is a toggle, and the dialog is
-committed with the **connect** button.
+committed with the **connect** button. During the free trial and without a
+subscription, a connection saved when you already have 10 is kept but locked: the
+dialog says **Connection saved, but locked**. See [Free trial and
+limits](../licensing/trial-and-limits.md).
 
-The two profile selects appear for SSH only, which is the same set of types that can
-invoke AI at all; assigning a profile to a type that can never invoke AI would mean
-nothing.
+AI works in SSH and Local Console tabs; the model is told the operating system and
+shell of a Local Console tab. The two profile selects appear for those two types, so a
+local shell — where proposed commands run on your own workstation — can have a
+stricter profile than your servers.
 
-**Enable AI** is offered for SSH and Serial connections. External launchers, file
-browsers, Telnet, RSH and Local do not show it: those sessions cannot reach the AI
-panel, so the toggle would have been a setting that silently did nothing.
+**Enable AI** is shown for SSH, Serial and Local connections. External launchers, file
+browsers, Telnet and RSH do not show it. In the side list, the AI badge appears for
+SSH and Local connections.
 
 **Let AI Assistant open this session** is a second, stricter permission than
 **Enable AI**. It is off for every new connection, and it only takes effect when
@@ -172,6 +182,12 @@ the bucket root.
 | Field | Control | Notes |
 |---|---|---|
 | **shell** | Select | Defaults to **use default (Settings → Terminal)**. The other options are filled in per platform |
+| **command safety profile**, **data handling profile** | Select | As for SSH |
+| **Enable AI** | Toggle | The built-in **Local** connection starts with AI off |
+
+The built-in **Local** connection is not one of the first 10 saved connections that the
+free trial and use without a subscription allow, as long as it opens a local shell.
+Changed into another type of connection, it counts like any other.
 
 ## See also
 

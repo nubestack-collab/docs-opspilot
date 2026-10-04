@@ -31,24 +31,28 @@ OpsPilot can work against.
 !!! note "Private or VPN-only is not air-gapped"
     With a cloud provider, the workstation still reaches the internet. That is
     **private or VPN-only** operation, and it is what most regulated teams need.
-    A genuinely **air-gapped** deployment requires a local model, after which
-    nothing leaves the machine. The interface ships every font and icon locally
-    and references no external resources, so it renders at full speed on a
-    workstation with no route to the internet.
+    A genuinely **air-gapped** deployment requires a local model, and a license
+    that needs no network: an offline license file, or an organisation-wide
+    deployment license that IT installs. Nothing then leaves the machine. The
+    interface ships every font and icon locally and references no external
+    resources, so it renders at full speed on a workstation with no route to the
+    internet.
 
 ## The execution boundary
 
-The model has one output channel: a proposal. Turning a proposal into a real
-command requires an approval event raised by your action. No configuration,
-provider, assistant or prompt changes this, and the interface reports it as
-**Always enforced** rather than offering it as a setting.
+The model has one output channel: a proposal. Only OpsPilot's own code turns a
+proposal into a real command, and only through its approval path: your click, or
+a rule you set in advance in a Command Safety profile. No provider, assistant or
+prompt changes this, and the interface reports it as **Always enforced** rather
+than offering it as a setting.
 
 A model that proposes `rm -rf /` produces a card on screen. It does not produce
 an outage.
 
 The boundary applies equally to external assistants. A command proposed over the
-MCP connector by Claude Desktop is handed to the same approval queue, and the
-assistant's request waits until you act on it.
+MCP connector by Claude Desktop is handed to the same approval queue, under the
+same Command Safety profile, and the assistant's request waits until the command
+is approved or dismissed.
 
 ## Risk tiers
 
@@ -56,16 +60,18 @@ Every proposed command lands in one of three tiers.
 
 | Tier | What it takes to run |
 |---|---|
-| <span class="tier tier-readonly">Read-only</span> | One click, or none if auto-run is enabled |
-| <span class="tier tier-low">Low risk</span> | One explicit click, always |
-| <span class="tier tier-high">High risk</span> | A typed written justification, then the click |
+| <span class="tier tier-readonly">Read-only</span> | One click, or none if the profile lets read-only commands run without asking |
+| <span class="tier tier-low">Low risk</span> | One click, or none if the profile runs everything except dangerous commands without asking |
+| <span class="tier tier-high">High risk</span> | A click, always; by default a typed reason first |
 
 Classification draws on two independent sources: the model's own assessment of
-the command it proposed, and your dangerous-pattern list. They combine
-asymmetrically — **a pattern match can promote a command to High risk, and
-nothing can demote a command the model has already flagged.** A model that
-misjudges a destructive command is caught by your list; a model that is
-over-cautious is never silently overridden.
+the command it proposed, and your dangerous-pattern list. With the default
+setting, **The AI's warning and my list**, they combine asymmetrically — **a
+pattern match can promote a command to High risk, and nothing can demote a
+command the model has already flagged.** A model that misjudges a destructive
+command is caught by your list; a model that is over-cautious is never silently
+overridden. A profile set to **Only my list** makes your list the only judge: the
+model's warning still appears on the command as a note, but it is not applied.
 
 Dangerous patterns are plain, case-insensitive substrings rather than regular
 expressions, which makes them quick to write and quick to review. Custom
@@ -78,23 +84,29 @@ Read-only work — tailing logs, describing resources, checking status — is wh
 an investigation spends most of its time, and approving a long series of commands
 makes it easy to stop reading them.
 
-Read-only commands can therefore run without a click. The setting ships off, and
-the interface states the reason to consider before switching it on: the read-only
-tag comes from the model's own assessment, and your dangerous-pattern list is the
-only independent check on it. Anything that changes or deletes still stops and
-waits, whichever way the setting is set.
+Each Command Safety profile therefore has a **Run commands without asking me**
+setting: **Ask me every time**, **Only read-only commands**, or **Everything
+except dangerous ones**. It ships set to **Ask me every time**. The read-only
+label comes from the model's own assessment, and your dangerous-pattern list is
+the only independent check on it, so loosen the setting only where you trust the
+blast radius. A command that counts as dangerous stops and waits for a click under
+every setting.
 
-Auto-run is a single workstation-wide switch rather than a per-profile setting.
-Per-environment strictness comes from Command Safety profiles, which do resolve
-per connection and per group.
+Because the setting belongs to a profile, it follows the connection: a lab group
+can run read-only commands by themselves while production asks every time. The
+chip in the AI panel's composer shows which applies to the session in front of
+you — **Auto-run off**, **Auto-run read-only** or **Auto-run all**.
 
 ## Local redaction
 
 Terminal output is redacted on the workstation, before any of it reaches an AI
 provider. Every path from a session buffer to AI context passes through the same
-redaction step first.
+redaction step first. Before that step, terminal control sequences are stripped
+from the output, so a secret with a colour code in the middle of it is still
+caught, and the shell-integration markers some Linux systems print around every
+command, which carry the host's machine ID and hostname, are not sent.
 
-Ten categories ship, five of them enabled by default.
+Eleven categories ship, six of them enabled by default.
 
 | Enabled by default | Opt-in |
 |---|---|
@@ -103,6 +115,7 @@ Ten categories ship, five of them enabled by default.
 | Bearer tokens | UUIDs |
 | JWTs | Email addresses |
 | Password and secret assignments | Hostnames and FQDNs |
+| NubeStack license keys | |
 
 The structural categories are opt-in by design. Redacting every IP address and
 hostname makes infrastructure diagnosis considerably harder, so that trade-off is
@@ -151,7 +164,9 @@ trade for running with no egress at all.
 
 Most engineers already pay for Claude, ChatGPT or Copilot. OpsPilot can use that
 subscription instead of a per-request API key by exposing itself as an MCP server
-for those applications to connect to.
+for those applications to connect to. Model usage is covered by your Claude,
+ChatGPT or Copilot plan; connecting an assistant to OpsPilot needs an active
+OpsPilot trial or subscription.
 
 Claude Desktop, VS Code Copilot Chat, ChatGPT Desktop and browser-based ChatGPT
 all connect. The connector binds to `127.0.0.1`, ships disabled, and requires a
@@ -159,8 +174,8 @@ token on every request, so only the applications you connect can reach it.
 
 The safety model is unchanged when the AI is external. A command proposed by
 Claude Desktop enters the same approval queue, receives the same risk tier and
-meets the same justification gate as one from OpsPilot's own panel, and the
-approval card names the assistant it came from.
+follows the same Command Safety profile as one from OpsPilot's own panel, and
+the approval card names the assistant it came from.
 
 ## Remote and mobile access
 
@@ -177,23 +192,25 @@ commands against servers with no internet connection of their own.
 The tunnel forwards only to OpsPilot's own loopback endpoint with a valid token;
 any other destination is refused, and no public listener is opened. The runtime
 API key is held with OS-level encryption and decrypted only into the tunnel
-process.
+process. Like the assistant connector, the tunnel needs an active OpsPilot trial
+or subscription.
 
 This is built for remote triage — checking service status, reading logs,
-confirming an alert. A High risk command requires a typed justification at the
-workstation, and a proposal from an assistant expires after five minutes, so
+confirming an alert. A command that counts as dangerous always needs a click at
+the workstation, and a proposal from an assistant expires after five minutes, so
 destructive change remains a deliberate act at the machine.
 
 ## Connection types in one window
 
-Ten connection types, all with the same AI layer, the same approval gate and the
-same redaction policy:
+Ten connection types in one window:
 
 SSH · Telnet · RSH · Mosh · RDP · VNC · FTP · AWS S3 · Serial · Local shell
 
+SSH and local shell sessions carry the full AI loop, with the same approval gate
+and the same redaction policy whichever model or assistant is answering; for a
+local shell the model is told which operating system and shell it is working in.
 A network engineer on a switch console, a Windows administrator on RDP, an SRE on
-SSH and a developer pushing a build to S3 all work in the same window with the
-same controls around them.
+SSH and a developer pushing a build to S3 all work in the same window.
 
 !!! warning "Telnet and RSH are unencrypted"
     Credentials and session content travel in clear text. Both are supported

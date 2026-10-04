@@ -4,7 +4,9 @@ RDP and VNC are the two graphical connection types. On Windows, an RDP session i
 a tab: a Windows server sits in the same window and the same tab bar as your SSH
 sessions, and you switch between them the way you switch between terminals. On
 macOS and Linux an RDP session opens in a separate client application:
-Microsoft's Windows App on macOS, and a FreeRDP client on Linux.
+Microsoft's Windows App on macOS, and a FreeRDP client on Linux. A direct VNC
+connection opens your own VNC viewer, and a VNC console reached through a
+hypervisor opens as a tab.
 
 ## Creating an RDP connection
 
@@ -21,10 +23,9 @@ Two RDP-specific fields follow:
   connect: if the logoff fails, the connection proceeds anyway.
 
 ![Creating an RDP connection to a Windows server, with domain and session options](../assets/images/11-rdp-connection.png)
-
-*An RDP connection. The domain field is optional, and **Force fresh session
+_An RDP connection. The domain field is optional, and **Force fresh session
 before connecting** is the option to reach for when a resumed session comes back
-at the wrong resolution.*
+at the wrong resolution._
 
 !!! danger "Force fresh session destroys unsaved work"
     Logging off a disconnected session discards anything left unsaved in it. If
@@ -50,7 +51,7 @@ On macOS, Windows App renders natively and with hardware acceleration, and it
 handles a server-side stuck-session case that the FreeRDP builds for macOS do
 not.
 
-Two credential notes follow from opening the session in an external client:
+Opening the session in an external client changes how the password is handled:
 
 - **On macOS, the password is deliberately not written into the generated `.rdp`
   file.** Windows App prompts you for it instead, which keeps the credential out
@@ -83,6 +84,28 @@ VNC has a **target** selector, and it decides what kind of session you get:
   yours. This is the path covered in
   [Hypervisor consoles](hypervisor-consoles.md), and it is the one to use for a
   VM that will not boot or has no SSH.
+
+## Desktops in their own window
+
+An RDP session on macOS or Linux, and a direct VNC host on any platform, run in a
+window of their own. During the free trial and without a subscription, each one
+still counts as one of the 10 sessions you can have open at once, and it shows as
+an entry at the end of the tab bar, such as **Remote desktop · admin@win-01** or
+**VNC viewer · 10.0.0.12**, with a **Close** button. With a subscription there is
+no limit, and no entry appears.
+
+How the entry ends depends on whether OpsPilot can follow the program:
+
+- **OpsPilot follows the program**, for example FreeRDP on Linux. The entry goes
+  when the window closes. Clicking its **Close** asks whether to close the
+  program, and closes its window too.
+- **OpsPilot hands the session to another app** and cannot follow it, for example
+  Windows App on macOS, or a VNC viewer opened through a `vnc://` link. The entry
+  stays until you close it. Clicking **Close** only stops counting it; close the
+  program's own window yourself.
+
+Point at an entry to read which of the two it is. See
+[Free trial and limits](../licensing/trial-and-limits.md).
 
 ## See also
 

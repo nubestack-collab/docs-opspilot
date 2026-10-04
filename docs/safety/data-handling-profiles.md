@@ -29,6 +29,24 @@ Matches are replaced with a typed placeholder naming the category, such as
 `[REDACTED:aws_access_key]`, so the model can still reason about the shape of the output
 and you can still see what was removed.
 
+### Terminal escape sequences
+
+Before terminal output is redacted, OpsPilot strips terminal control sequences from it:
+colours, cursor moves, window titles and shell-integration markers. Progress lines that
+redraw themselves are collapsed to what the screen finally showed.
+
+- **It keeps redaction reliable.** A secret with a colour code in the middle of it, such
+  as `AKIA` followed by an escape sequence and the rest of the key, would not match a
+  pattern. Stripping first is what lets the pattern match.
+- **It stops a host identifier leaking.** Recent systemd versions, on by default in
+  current Ubuntu releases, print an invisible marker around every command that carries
+  the host's machine ID, boot ID, hostname and working directory. Stripping removes it
+  before any of it reaches a model.
+
+This applies to terminal output only. A file you attach, or one an assistant reads, is
+sent as its own contents after redaction, because rewriting a file's bytes would change
+what was asked for.
+
 ### Attachments resolve to Default
 
 Attachment handling has two specifics to know before you rely on a strict profile:
@@ -45,7 +63,7 @@ Attachments are also capped at 40,000 characters. Anything longer is clipped to 
 length before redaction and flagged as truncated, so the model is told it is working from
 a partial file.
 
-## The ten built-in categories
+## The eleven built-in categories
 
 | On by default | Off by default (opt in) |
 |---|---|
@@ -54,20 +72,27 @@ a partial file.
 | Bearer tokens | UUIDs |
 | JWTs | Email addresses |
 | Password/secret assignments | Hostnames / FQDNs |
+| NubeStack license keys | |
 
-Each is an independent on/off toggle in the profile. What each one matches is listed on
+Each is an independent on/off toggle in the profile, under **Built-in categories** in the
+profile editor. What each one matches is listed on
 [Redaction categories](../reference/redaction-categories.md).
 
-![The redaction editor listing the ten built-in categories as toggles, with a custom pattern field below](../assets/images/07-redaction-editor.png)
+**NubeStack license keys** catches an OpsPilot license key (`OPSP-` followed by five
+groups of five characters) printed in a terminal — in a deployment script, say, or a
+`policy.json` being written — including a key typed without dashes or with spaces. A key
+activates a computer, so it is treated like any other credential.
 
-*Data Handling profiles. The five credential categories are on by default; the five
-structural categories are opt-in. Your own patterns go at the bottom, and each is
-validated before it can be saved.*
+![The Default Data Handling profile editor: eleven built-in categories, the first six switched on and the five address and identifier categories off, with custom pattern fields below](../assets/images/30-data-handling-editor.png)
+_The **Default** profile. The six credential categories, including **NubeStack license
+keys**, are on; IPv4, IPv6, UUIDs, email addresses and hostnames are off. Your own
+patterns take a name and a regular expression, with **aA** for a case-insensitive
+match._
 
 ### Credential and structural categories
 
-The five credential categories are on because no infrastructure task needs the model to
-see a live AWS key or a private key block.
+The six credential categories are on because no infrastructure task needs the model to
+see a live AWS key, a private key block or a license key.
 
 The five structural categories are off because redacting every IP address and hostname
 makes infrastructure diagnosis considerably harder. A diagnosis of a routing problem, a
@@ -115,18 +140,19 @@ classes are showing up in terminal output.
 Precedence is the same as for Command Safety: **connection → group → Default**. The
 connection's own assignment wins if set, otherwise its group's, otherwise the Default
 profile. A profile replaces Default rather than extending it, so a production profile has
-to be complete in itself. Default is seeded with the five credential categories on, the
-five structural ones off, and no custom patterns; it cannot be deleted. A profile id that
-no longer exists falls through to Default rather than failing.
+to be complete in itself. Default is seeded with the six credential categories on, the
+five structural ones off, and no custom patterns; it cannot be deleted. A profile that no
+longer exists falls through to Default rather than failing.
 
 A category that is absent from a saved profile — because the profile was saved before that
 category existed — falls back to that category's own default rather than being silently
-dropped.
+dropped. A profile saved by an earlier version therefore redacts NubeStack license keys
+with no change on your part.
 
-As with Command Safety, per-connection assignment applies to SSH sessions: the AI path
-resolves sessions through the SSH session manager, and Telnet, RSH, file browsers and
-external launchers have no AI path at all. A Data Handling profile assigned to one of
-those connections has nothing to act on.
+As with Command Safety, the profile choice in the connection dialog appears for **SSH**
+and **Local Console** connections, the two kinds of session the AI works on. Telnet, RSH,
+serial, file browsers and external launchers have no AI path at all, so a profile has
+nothing to act on there.
 
 ## One policy for every AI path
 

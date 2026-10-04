@@ -13,6 +13,7 @@ protocol's own listening port, and the product opens no public listener.
 | OpsPilot → Ollama | Loopback | `http://localhost:11434`, loopback only |
 | Assistants → OpsPilot | Loopback | `127.0.0.1` only, with a bearer token |
 | ChatGPT Web/Work → OpsPilot | Outbound from the workstation | Outbound to the OpenAI tunnel. **No inbound listener** |
+| OpsPilot → `license.nubestack.com` | Outbound HTTPS, TCP 443 | **Optional.** Only after online activation. Not needed for the trial, offline activation or a deployment license |
 
 The only listener OpsPilot ever opens is the MCP connector, and it binds
 `127.0.0.1` — see below. There is no inbound path to the workstation in any
@@ -95,13 +96,50 @@ does.
 Ollama's only field is **Ollama Endpoint**, placeholdered
 `http://localhost:11434`. With Ollama, or with a self-hosted OpenAI-compatible
 endpoint on your own network, the workstation's outbound HTTPS requirement
-disappears entirely.
+disappears entirely, as long as licensing needs none either: the free trial, offline
+activation and deployment licenses make no connection.
 
 !!! note "Private or VPN-only is not air-gapped"
     With a cloud provider, the workstation still reaches the internet. That is
     private or VPN-only operation. Only a local model — Ollama, or a self-hosted
-    endpoint — closes the loop. See
-    [Offline with Ollama](../ai/offline-ollama.md).
+    endpoint — together with offline activation or a deployment license closes the
+    loop. See [Offline with Ollama](../ai/offline-ollama.md).
+
+## Outbound to the license server
+
+OpsPilot sends no telemetry. The only connection it makes for licensing is optional, and
+it exists only on a computer whose license was activated online:
+
+| When | What happens |
+|---|---|
+| Online activation | One request to `https://license.nubestack.com` (TCP 443) |
+| While OpsPilot is running and the computer is in use | A quick check about every 5 minutes, and a few seconds after start, wake from sleep and screen unlock, asking whether this computer is still licensed. The license server does not record it |
+| About once a day | A renewal of the 30-day license, and a download of the revocation list |
+
+"In use" means someone has used the keyboard or mouse in the last 15 minutes and the
+screen is not locked, or AI is being used there through an assistant or the ChatGPT
+tunnel. Activation sends the license key (once), a one-way device ID, the device label
+the user chose, the platform and the app version; renewals and checks send a proof made
+with the device's own secret instead of the key. No request carries terminal content,
+host names or user names.
+
+The free trial, offline activation and deployment licenses make no licensing connections
+at all, and neither does a computer that was never activated online.
+
+- **Firewalls and proxies.** Allow `license.nubestack.com` on TCP 443 if you use online
+  activation. For licensing, OpsPilot uses the operating system's proxy settings and
+  certificate store, so a TLS-inspecting proxy works. Licenses are checked against
+  NubeStack's signature on the computer itself, so a proxy cannot change or forge one.
+- **Turning it off.** `"networkActivation": "disabled"` in `policy.json`, in the managed
+  folder, stops all licensing traffic on that machine; users then activate offline or run
+  on a deployment license. A `policy.json` that exists but cannot be read also keeps
+  online activation off. There is no setting for fewer checks: this is the only switch.
+- **Another license server.** `licenseServer` in `policy.json` points OpsPilot at a
+  different address. Only an `https://` address is accepted, and **Settings → License**
+  then names that server where it describes online activation.
+
+See [Licensing for IT](../licensing/for-it.md) for the managed folder and the other
+fields of `policy.json`.
 
 ## Inbound: the MCP connector
 
@@ -145,8 +183,8 @@ The path is outbound-only, from the workstation. See
 - **No software on any target host.** No agent, no daemon, no sidecar, no package.
 - **No inbound rule to a target** beyond the port its protocol already listens on.
 - **No outbound internet access from a target.** Ever, in any configuration.
-- **No account, no licence server call-home, no telemetry.** There is no cloud
-  backend to reach.
+- **No telemetry, and no account to sign in to.** Licensing traffic exists only after
+  an online activation, and `policy.json` can forbid it.
 
 ## See also
 

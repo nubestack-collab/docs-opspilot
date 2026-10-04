@@ -26,7 +26,8 @@ strict in production without anyone remembering to change a setting first.
 ## Network engineers
 
 Telnet and serial console access to switches, routers and firewalls that will
-never run an agent, with AI help reading configuration diffs and interface state.
+never run an agent, in the same window as SSH sessions to them, where the AI helps
+read configuration diffs and interface state.
 The connection types that matter here are the ones AI tooling normally ignores —
 see [Connection types](../connections/connection-types.md).
 
@@ -40,19 +41,22 @@ the half that tool cannot reach — the environment the code has to run in.
 ## Security and compliance teams
 
 A demonstrable boundary between an AI and a production shell, a redaction layer
-that runs on one code path before egress, and a typed-justification gate on
-destructive operations. What makes this reviewable is that the boundary is
-architectural rather than configurable: there is no setting, provider or prompt
-that turns it off. See [Security model](../safety/security-model.md).
+that runs on one code path before egress, and a click required on every command
+that counts as dangerous, with a typed justification on by default. What makes
+this reviewable is that the boundary is architectural rather than configurable:
+there is no setting, provider or prompt that hands a model a shell. What may run
+without a click is set per Command Safety profile, so it can be reviewed like any
+other policy. See [Security model](../safety/security-model.md).
 
 ## Regulated and disconnected environments
 
 Banking, defence, healthcare, utilities, industrial control, and air-gapped
 estates. This is the audience that has been told for years that AI assistance is
 not available to them, because the hosts cannot reach a model and because handing
-a model a shell was never going to pass review. OpsPilot addresses both halves —
-and with a local model via [Ollama](../ai/offline-ollama.md), nothing leaves the
-workstation at all.
+a model a shell was never going to pass review. OpsPilot addresses both halves.
+With a local model via [Ollama](../ai/offline-ollama.md), and an offline license
+file or an organisation-wide deployment license, nothing leaves the workstation at
+all — see [Licensing for IT](../licensing/for-it.md).
 
 ## See also
 
